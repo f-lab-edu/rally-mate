@@ -77,11 +77,18 @@ jobs:
           host: ${{ secrets.SERVER_SSH_HOST }}
           username: ${{ secrets.SERVER_SSH_USERNAME }}
           password: ${{ secrets.SERVER_SSH_PASSWORD }}
+          port: ${{ secrets.SERVER_SSH_PORT }}
           envs: env.PROJECT
           script: |
-            cd $${ env.PROJECT }}
+            whoami > whoami.txt
+            echo $(whoami) > whoami2.txt
+            cd ~/${{ env.PROJECT }}
             git pull
             cd docker
+            sudo docker login -u ${{ secrets.DOCKERHUB_USER }} -p '${{ secrets.DOCKERHUB_PASSWORD }}'
+            sudo docker rm -f $(docker ps -q -a)
             docker-compose pull
-            docker-compose up --force-recreate
+            docker-compose up -d
             docker image prune -f
+            
+
