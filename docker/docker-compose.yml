@@ -1,0 +1,7 @@
+version: '3.0'
+
+services:
+  rally-mate:
+    image: phj0860/rally-mate:latest
+    ports:
+      - "8080:8080"
