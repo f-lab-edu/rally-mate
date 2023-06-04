@@ -85,7 +85,7 @@ jobs:
             cd ~/${{ env.PROJECT }}
             git pull
             cd docker
-            sudo docker login -u ${{ secrets.DOCKERHUB_USER }} -p '${{ secrets.DOCKERHUB_PASSWORD }}'
+            echo '${{ secrets.DOCKERHUB_PASSWORD }}' | docker login -u ${{ secrets.DOCKERHUB_USER }} --password-stdin
             sudo docker rm -f $(docker ps -q -a)
             docker-compose pull
             docker-compose up -d
