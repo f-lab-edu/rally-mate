@@ -1,0 +1,57 @@
+server:
+  port: 9000
+  servlet:
+    encoding:
+      force-response: true
+  tomcat:
+    uri-encoding: UTF-8
+
+spring:
+  datasource:
+    url: jdbc:mysql://db-grtk2.pub-cdb.ntruss.com:3306/rallymate_db?serverTimezone=UTC&characterEncoding=UTF-8
+    username: ENC(j/UxR+XxfBzdFGnFRz6E1FBLY2b3lReXDdHOowQyKVmNWABoMb7FnMJfmv7Yq0k8)
+    password: ENC(wyWWqPbgLOxYGyOZubp+af2fqebd1vDb7uHvabnlHAgBWNP/NzyLesseq9GWxRNw)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+#  redis:
+#    cache:
+#      host:
+#      port: 6379
+#    token:
+#      host:
+#      port: 6380
+#  cache:
+#    type: redis #redis-cache 사용
+
+
+  #  profiles:
+  #    include:
+  #      - infra
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+    open-in-view: false
+
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.type: trace
+
+# p6spy
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: true
