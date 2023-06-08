@@ -3,8 +3,8 @@ name: rally-mate CI with Gradle
 on:
   push:
     branches: [ master ]
-  #   pull_request:
-  #     branches: [ master ]
+  pull_request:
+      branches: [ master ]
 
 
 # Actions 탭에서 수동 실행 가능
@@ -16,10 +16,6 @@ on:
 #       env:
 #         required: true
 #         type: string
-
-env:
-  PROJECT: rally-mate
-
 
 jobs:
   build:
@@ -66,29 +62,3 @@ jobs:
       # jib 이용하여 애플리케이션 도커 허브로 push (docker build -> push까지 한 번에)
       - name: Run Jib to deploy Application
         run: ./gradlew jib
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Application Run
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_SSH_HOST }}
-          username: ${{ secrets.SERVER_SSH_USERNAME }}
-          password: ${{ secrets.SERVER_SSH_PASSWORD }}
-          port: ${{ secrets.SERVER_SSH_PORT }}
-          envs: env.PROJECT
-          script: |
-            whoami > whoami.txt
-            echo $(whoami) > whoami2.txt
-            cd ~/${{ env.PROJECT }}
-            git pull
-            cd docker
-            echo '${{ secrets.DOCKERHUB_PASSWORD }}' | docker login -u ${{ secrets.DOCKERHUB_USER }} --password-stdin
-            sudo docker rm -f $(docker ps -q -a)
-            docker-compose pull
-            docker-compose up -d
-            docker image prune -f
-            
-
