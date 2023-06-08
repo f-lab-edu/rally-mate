@@ -7,6 +7,10 @@ server:
     uri-encoding: UTF-8
 
 spring:
+  profiles:
+    include:
+      - secret
+
   datasource:
     url: jdbc:mysql://db-grtk2.pub-cdb.ntruss.com:3306/rallymate_db?serverTimezone=UTC&characterEncoding=UTF-8
     username: ENC(j/UxR+XxfBzdFGnFRz6E1FBLY2b3lReXDdHOowQyKVmNWABoMb7FnMJfmv7Yq0k8)
@@ -24,9 +28,6 @@ spring:
 #    type: redis #redis-cache 사용
 
 
-  #  profiles:
-  #    include:
-  #      - infra
 
   jpa:
     hibernate:
