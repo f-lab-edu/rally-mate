@@ -30,7 +30,7 @@ jib {
 	}
 	container {
 		creationTime = "USE_CURRENT_TIMESTAMP"
-		jvmFlags = ["-Xms128m", "-Xmx128m"]
+		// jvmFlags = ["-Xms128m", "-Xmx128m"]
 		// jvmFlags = ["-Dspring.profiles.active=prod" ]
 	}
 }
@@ -46,8 +46,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// DB / ORM
-//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	//runtimeOnly 'com.mysql:mysql-connector-j'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	runtimeOnly 'com.mysql:mysql-connector-j'
 
 	// spring-test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
@@ -68,6 +68,17 @@ dependencies {
 
 	// swagger-ui
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
+
+	// jwt
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: '0.11.5'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-impl', version: '0.11.5'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: '0.11.5'
+
+	// Jasypt
+	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
+
+	// https://mvnrepository.com/artifact/com.github.gavlyukovskiy/p6spy-spring-boot-starter
+	implementation group: 'com.github.gavlyukovskiy', name: 'p6spy-spring-boot-starter', version: '1.9.0'
 
 
 }
