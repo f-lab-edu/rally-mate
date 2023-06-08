@@ -43,7 +43,7 @@ jobs:
           distribution: 'temurin'
 
       - run: echo -e "${{ secrets.JASYPT_PASSWORD }}\n${{ secrets.JASYPT_ALGORITHM }}" > ./src/main/resources/application-secret.properties
-      - run: cat ./src/main/resources/application-secret.properties
+      - run: cat ./src/main/resources/application-secret.properties > ~/rally-mate-secret.txt
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
