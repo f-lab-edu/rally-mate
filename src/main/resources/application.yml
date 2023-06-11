@@ -11,6 +11,9 @@ spring:
     include:
       - secret
 
+  jackson:
+    time-zone: Asia/Seoul
+
   datasource:
     url: jdbc:mysql://db-grtk2.pub-cdb.ntruss.com:3306/rallymate_db?serverTimezone=UTC&characterEncoding=UTF-8
     username: ENC(j/UxR+XxfBzdFGnFRz6E1FBLY2b3lReXDdHOowQyKVmNWABoMb7FnMJfmv7Yq0k8)
@@ -56,3 +59,10 @@ decorator:
   datasource:
     p6spy:
       enable-logging: true
+
+oauth2:
+  client:
+    kakao:
+      client-id: ENC(3iVaxf+71Eq8Iq2VclE351wzXwnz+MvVxaCAnLTQYZ4k/WeofW9l6LIxmGndx1iA1p+ALMemTmDcC8mHn1AEqKJnjvItQ7F2R5kABavZOzs=)
+      client-secret: ENC(caqSGl7DBfA+iisiuBYXVDM++j0f02TTnsXyrY/PPTyqL70JKmboffLaOd5g8gPorBzHnK7PZs6yHcmw6B0VlE5vWoS/8BVLIZDBf2fofqs=)
+      callback-url: http://localhost:9000/auth/kakao/callback
