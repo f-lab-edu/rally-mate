@@ -43,7 +43,7 @@ public class JwtTokenProvider {
         return Keys.hmacShaKeyFor(secretKey.getEncoded());
     }
 
-    private Claims extractAllClaims(String token) {
+    private Claims extractClaims(String token) {
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getKey())
@@ -54,7 +54,7 @@ public class JwtTokenProvider {
 
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
+        final Claims claims = extractClaims(token);
         return claimsResolver.apply(claims);
     }
 
