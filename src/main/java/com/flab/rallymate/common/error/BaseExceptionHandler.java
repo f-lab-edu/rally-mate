@@ -19,7 +19,6 @@ public class BaseExceptionHandler {
         return ResponseEntity.status(ex.getError().getHttpStatus()).body(BaseHttpResponse.error(ex.getMessage()));
     }
 
-    // 500
     @ExceptionHandler(Exception.class)
     public ResponseEntity<BaseHttpResponse<?>> internalServerExceptionHandler(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(BaseHttpResponse.error(ex.getMessage()));

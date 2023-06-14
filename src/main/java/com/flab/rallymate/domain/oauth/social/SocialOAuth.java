@@ -20,7 +20,7 @@ public interface SocialOAuth {
 	String getInitPassword();
 
 	default OAuthType type() {
-		if (this instanceof KakaoOAuthImpl) {
+		if (this instanceof KakaoOAuth) {
 			return OAuthType.KAKAO;
 		} else {
 			return null;

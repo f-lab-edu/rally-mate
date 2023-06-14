@@ -54,7 +54,6 @@ public class Member {
 	}
 
 	public static Member createMember(String name, String email, String password) {
-		System.out.println("LocalDateTime.now() = " + LocalDateTime.now());
 		return Member.builder()
 			.name(name)
 			.email(email)

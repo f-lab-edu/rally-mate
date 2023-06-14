@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-@Transactional(readOnly = true)
+@Transactional
 public class MemberService {
 
 	private final MemberRepository memberRepository;
@@ -36,6 +36,7 @@ public class MemberService {
 		this.tokenProvider = tokenProvider;
 	}
 
+	@Transactional(readOnly = true)
 	public MemberLoginRes login(MemberLoginReq loginReq) {
 
 		Member findMember = memberRepository.findMemberByEmailAndStatus(loginReq.email(), USED)
@@ -58,6 +59,7 @@ public class MemberService {
 		return savedMember.getId();
 	}
 
+	@Transactional(readOnly = true)
 	public Optional<MemberDTO> findMemberBy(String email) {
 		return memberRepository.findMemberByEmailAndStatus(email, USED)
 			.map(MemberDTO::from);

@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
 	PASSWORD_NOT_MATCH(HttpStatus.BAD_REQUEST, "password not match"),
+	INVALID_SOCIAL_TYPE(HttpStatus.BAD_REQUEST, "Cannot find social type"),
 	DUPLICATE_EMAIL(HttpStatus.CONFLICT, "User email duplicated."),
 	USER_NOT_FOUND(HttpStatus.NOT_FOUND, "User is not found."),
 	EMPTY_USER(HttpStatus.NOT_FOUND, "User is empty."),
