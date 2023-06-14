@@ -25,7 +25,7 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
         String accessToken = request.getHeader(X_ACCESS_TOKEN.name());
         String requestURI = request.getRequestURI();
 
-        if (accessToken != null && tokenProvider.validationToken(accessToken))
+        if (accessToken != null && tokenProvider.isValidToken(accessToken))
             return true;
 
         throw new BaseException(ErrorCode.INVALID_TOKEN);

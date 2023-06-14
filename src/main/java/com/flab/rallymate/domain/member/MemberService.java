@@ -42,8 +42,6 @@ public class MemberService {
 		Member findMember = memberRepository.findMemberByEmailAndStatus(loginReq.email(), USED)
 			.orElseThrow(() -> new BaseException(USER_NOT_FOUND));
 
-		log.info("### encoded password = {}", passwordEncoder.encode("1234"));
-
 		if (!passwordEncoder.matches(loginReq.password(), findMember.getPassword()))
 			throw new BaseException(PASSWORD_NOT_MATCH);
 

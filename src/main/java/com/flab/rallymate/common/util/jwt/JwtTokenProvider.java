@@ -63,7 +63,7 @@ public class JwtTokenProvider {
     }
 
 
-    public boolean validationToken(String token) {
+    public boolean isValidToken(String token) {
         return (getEmailByToken(token) != null && !isTokenExpired(token));
     }
 
