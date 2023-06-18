@@ -1,4 +1,6 @@
-package com.flab.rallymate.common.util.jwt;
+package com.flab.rallymate.auth.jwt;
+
+import static com.flab.rallymate.auth.jwt.constant.TokenType.*;
 
 import com.flab.rallymate.domain.member.domain.Member;
 import io.jsonwebtoken.Claims;
@@ -6,6 +8,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -61,6 +64,8 @@ public class JwtTokenProvider {
     public String getEmailByToken(String token) {
         return extractClaim(token, Claims::getSubject);
     }
+
+	public String getAccessToken(HttpServletRequest request) { return request.getHeader(X_ACCESS_TOKEN.label); }
 
 
     public boolean isValidToken(String token) {
