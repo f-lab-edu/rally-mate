@@ -1,4 +1,4 @@
-package com.flab.rallymate.common.config;
+package com.flab.rallymate.config;
 
 import org.springframework.context.annotation.Configuration;
 
@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 	name = "Bearer Authentication",
 	type = SecuritySchemeType.APIKEY,
 	in = SecuritySchemeIn.HEADER,
-	paramName = "X_ACCESS_TOKEN",
+	paramName = "X-ACCESS-TOKEN",
 	scheme = "bearer"
 )
 public class SwaggerConfig {

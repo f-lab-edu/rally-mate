@@ -1,4 +1,4 @@
-package com.flab.rallymate.domain.oauth.config;
+package com.flab.rallymate.auth.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.ConstructorBinding;
@@ -11,7 +11,7 @@ import lombok.Getter;
 @Validated
 @ConfigurationProperties(prefix = "oauth2.client.kakao")
 public class KakaoOAuthProperties {
-	
+
 	@NotBlank
 	private final String clientId;
 

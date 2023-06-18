@@ -44,7 +44,7 @@ public class Member {
 	private LocalDateTime createdTime;
 
 	@Builder
-	private Member(Long id, String name, String email, String password, Status status, LocalDateTime createdTime) {
+	public Member(Long id, String name, String email, String password, Status status, LocalDateTime createdTime) {
 		this.id = id;
 		this.name = name;
 		this.email = email;

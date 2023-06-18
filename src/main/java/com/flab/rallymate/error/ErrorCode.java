@@ -1,4 +1,4 @@
-package com.flab.rallymate.common.response;
+package com.flab.rallymate.error;
 
 import org.springframework.http.HttpStatus;
 
@@ -13,6 +13,9 @@ public enum ErrorCode {
 	INVALID_AUTHENTICATION(HttpStatus.UNAUTHORIZED, "Invalid Authentication"),
 	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "Invalid Token"),
 	INVALID_TOKEN_ALGORITHM(HttpStatus.UNAUTHORIZED, "Invalid Token Algorithm"),
+	NOT_FOUND_KAKAO_USER_INFO(HttpStatus.NOT_FOUND, "Not found Kakao user info"),
+	NOT_FOUND_MEMBER(HttpStatus.NOT_FOUND, "Not found member"),
+	ACCESS_DENIED(HttpStatus.FORBIDDEN, "Access is denied"),
 	DUMMY(HttpStatus.CONFLICT, "");
 
 	private final HttpStatus httpStatus;

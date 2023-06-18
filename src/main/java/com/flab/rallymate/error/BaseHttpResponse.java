@@ -1,4 +1,4 @@
-package com.flab.rallymate.common.response;
+package com.flab.rallymate.error;
 
 import java.util.HashMap;
 import java.util.Map;

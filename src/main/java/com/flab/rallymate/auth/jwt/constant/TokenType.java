@@ -1,4 +1,4 @@
-package com.flab.rallymate.common.util.jwt.constant;
+package com.flab.rallymate.auth.jwt.constant;
 
 public enum TokenType {
 	X_ACCESS_TOKEN("X-ACCESS-TOKEN"),

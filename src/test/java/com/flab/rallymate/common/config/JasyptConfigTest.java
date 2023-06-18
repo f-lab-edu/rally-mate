@@ -9,6 +9,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.flab.rallymate.config.JasyptConfig;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 public class JasyptConfigTest extends JasyptConfig {
 
     @Disabled
@@ -32,7 +37,7 @@ public class JasyptConfigTest extends JasyptConfig {
         String encryptedText = jasypt.encrypt(plainText);
         String decryptedText = jasypt.decrypt(encryptedText);
 
-        System.out.println(decryptedText + " ===> " + encryptedText);
+        log.info(decryptedText + " ===> " + encryptedText);
 
         assertThat(plainText).isEqualTo(decryptedText);
     }

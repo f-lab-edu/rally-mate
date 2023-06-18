@@ -1,4 +1,4 @@
-package com.flab.rallymate.common.response;
+package com.flab.rallymate.error;
 
 public class BaseException extends RuntimeException {
 

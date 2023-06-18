@@ -1,12 +1,9 @@
-package com.flab.rallymate.common.error;
+package com.flab.rallymate.error;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import com.flab.rallymate.common.response.BaseException;
-import com.flab.rallymate.common.response.BaseHttpResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
