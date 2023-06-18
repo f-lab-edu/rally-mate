@@ -15,9 +15,11 @@ import com.flab.rallymate.auth.dto.KakaoTokenResponseDTO;
 import com.flab.rallymate.auth.dto.KakaoUserResponseDTO;
 import com.flab.rallymate.auth.dto.LoginResponseDTO;
 import com.flab.rallymate.auth.jwt.JwtTokenProvider;
+import com.flab.rallymate.auth.jwt.RefreshTokenRedisRepository;
+import com.flab.rallymate.auth.jwt.dto.RefreshToken;
 import com.flab.rallymate.domain.member.MemberService;
 import com.flab.rallymate.domain.member.domain.Member;
-import com.flab.rallymate.domain.member.dto.MemberJoinReq;
+import com.flab.rallymate.domain.member.dto.MemberJoinRequestDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,9 +31,12 @@ public class AuthService {
 	private final KakaoAuthClient kakaoAuthClient;
 	private final KakaoInfoClient kakaoInfoClient;
 	private final KakaoOAuthProperties kakaoOAuthProperties;
+
 	private final MemberService memberService;
-	private final JwtTokenProvider jwtTokenProvider;
 	private final PasswordEncoder passwordEncoder;
+
+	private final JwtTokenProvider jwtTokenProvider;
+	private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
 	public LoginResponseDTO kakaoLogin(String authCode) throws JSONException {
 		KakaoTokenResponseDTO kakaoTokenResponseDTO = kakaoAuthClient.requestToken(
@@ -46,24 +51,34 @@ public class AuthService {
 		KakaoUserResponseDTO kakaoUser = KakaoUserResponseDTO.of(
 			body.getLong("id"),
 			body.getJSONObject("kakao_account").getString("email"),
-			body.getJSONObject("properties").getString("nickname"));
+			body.getJSONObject("properties").getString("nickname")
+		);
 
 		Optional<Member> findMember = memberService.findMemberBy(kakaoUser.email());
 
 		if (findMember.isEmpty()) {
-			MemberJoinReq joinReq = MemberJoinReq.of(
+			MemberJoinRequestDTO joinReq = MemberJoinRequestDTO.of(
 				kakaoUser.nickname(),
 				kakaoUser.email(),
 				passwordEncoder.encode(kakaoUser.id() + kakaoOAuthProperties.getClientSecret())
 			);
 
 			Member savedMember = memberService.join(joinReq);
-			String accessToken = jwtTokenProvider.createAccessToken(savedMember);
-
-			return LoginResponseDTO.of(savedMember.getId(), accessToken);
+			return createLoginResponse(savedMember);
 		}
-		String accessToken = jwtTokenProvider.createAccessToken(findMember.get());
 
-		return LoginResponseDTO.of(findMember.get().getId(), accessToken);
+		return createLoginResponse(findMember.get());
+	}
+
+	private LoginResponseDTO createLoginResponse(Member member) {
+		String accessToken = jwtTokenProvider.createAccessToken(member);
+		RefreshToken refreshToken = saveRefreshToken(member);
+
+		return LoginResponseDTO.of(member.getId(), accessToken, refreshToken.getRefreshToken());
+	}
+
+	private RefreshToken saveRefreshToken(Member member) {
+		return refreshTokenRedisRepository.save(RefreshToken.of(member.getId(),
+			jwtTokenProvider.createRefreshToken(member), JwtTokenProvider.REFRESH_TOKEN_TIMEOUT));
 	}
 }

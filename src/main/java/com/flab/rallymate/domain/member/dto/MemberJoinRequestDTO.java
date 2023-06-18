@@ -2,16 +2,16 @@ package com.flab.rallymate.domain.member.dto;
 
 import lombok.Builder;
 
-public record MemberJoinReq(
+public record MemberJoinRequestDTO(
 		String name,
 		String email,
 		String password
 ) {
 	@Builder
-	public MemberJoinReq {}
+	public MemberJoinRequestDTO {}
 
-	public static MemberJoinReq of(String name, String email, String password) {
-		return MemberJoinReq.builder()
+	public static MemberJoinRequestDTO of(String name, String email, String password) {
+		return MemberJoinRequestDTO.builder()
 			.name(name)
 			.email(email)
 			.password(password)

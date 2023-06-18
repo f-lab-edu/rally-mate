@@ -40,7 +40,7 @@ public class SecurityConfig {
 
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
-		return (web) -> web.ignoring().requestMatchers("/auth/**");
+		return (web) -> web.ignoring().requestMatchers("/auth/**", "/favicon.ico");
 	}
 
 	@Bean

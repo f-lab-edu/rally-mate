@@ -29,12 +29,14 @@ class AuthControllerTest {
 	@Test
 	void 로그인에_성공하면_JWT를_리턴한다() throws Exception {
 		String sampleAuthCode = "sampleAuthCode";
-		when(authService.kakaoLogin(sampleAuthCode)).thenReturn(LoginResponseDTO.of(1L, "sampleJwt"));
+		when(authService.kakaoLogin(sampleAuthCode)).thenReturn(
+			LoginResponseDTO.of(1L, "sampleAccessToken", "sampleRefreshToken"));
 
 		client.perform(get("/auth/login")
 				.param("code", sampleAuthCode))
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.data.accessToken", is("sampleJwt")));
+			.andExpect(jsonPath("$.data.accessToken", is("sampleAccessToken")))
+			.andExpect(jsonPath("$.data.refreshToken", is("sampleRefreshToken")));
 
 		verify(authService).kakaoLogin(sampleAuthCode);
 

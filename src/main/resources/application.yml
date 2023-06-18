@@ -20,16 +20,10 @@ spring:
     password: ENC(wyWWqPbgLOxYGyOZubp+af2fqebd1vDb7uHvabnlHAgBWNP/NzyLesseq9GWxRNw)
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-#  redis:
-#    cache:
-#      host:
-#      port: 6379
-#    token:
-#      host:
-#      port: 6380
-#  cache:
-#    type: redis #redis-cache 사용
-
+  redis:
+    token:
+      host: 127.0.0.1
+      port: 6379
 
 
   jpa:

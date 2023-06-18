@@ -1,4 +1,4 @@
-package com.flab.rallymate.common.config;
+package com.flab.rallymate.config;
 
 import static org.assertj.core.api.Assertions.*;
 

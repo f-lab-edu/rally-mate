@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
-import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.function.Function;
 
@@ -22,29 +21,26 @@ import java.util.function.Function;
 public class JwtTokenProvider {
 
     private Key secretKey;
-    private static final Long accessTokenTimeout = 1000 * 60 * 60 * 2L;        // 2H
-    private static final Long refreshTokenTimeout = 1000 * 60 * 60 * 24 * 7L;    // 7H
+	public static final Long ACCESS_TOKEN_TIMEOUT = 1000 * 60 * 30L; // 30M
+	public static final Long REFRESH_TOKEN_TIMEOUT = 1000 * 60 * 60 * 24 * 7L;    // 7Day
+	public static final Long REFRESH_TOKEN_REISSUE_TIMEOUT = 1000 * 60 * 60 * 24 * 3L;    // 3Day
 
-    @PostConstruct
-    protected void init() {
-        secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);
-    }
+	@PostConstruct
+	protected void init() {
+		secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+	}
 
-    public String createAccessToken(Member member) {
-        Claims claims = Jwts.claims();
-        claims.put("id", member.getId());
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(member.getEmail())
-                .setIssuedAt(new Date(ZonedDateTime.now().toInstant().toEpochMilli()))
-                .setExpiration(new Date(ZonedDateTime.now().toInstant().toEpochMilli() + accessTokenTimeout))
-                .signWith(getKey())
-                .compact();
-    }
+	public String createAccessToken(Member member) {
+		return generateToken(member, ACCESS_TOKEN_TIMEOUT);
+	}
 
-    private Key getKey() {
-        return Keys.hmacShaKeyFor(secretKey.getEncoded());
-    }
+	public String createRefreshToken(Member member) {
+		return generateToken(member, REFRESH_TOKEN_TIMEOUT);
+	}
+
+	private Key getKey() {
+		return Keys.hmacShaKeyFor(secretKey.getEncoded());
+	}
 
     private Claims extractClaims(String token) {
         return Jwts
@@ -79,4 +75,27 @@ public class JwtTokenProvider {
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
+
+	private String generateToken(Member member, long expireDuration) {
+		Claims claims = Jwts.claims();
+		claims.put("id", member.getId());
+
+		return Jwts.builder()
+			.setClaims(claims)
+			.setSubject(member.getEmail())
+			.setIssuedAt(new Date(System.currentTimeMillis()))
+			.setExpiration(new Date(System.currentTimeMillis() + expireDuration))
+			.signWith(getKey())
+			.compact();
+	}
+
+	public long getRemainMilliSeconds(String token) {
+		Date expiration = extractClaims(token).getExpiration();
+		Date now = new Date();
+		return expiration.getTime() - now.getTime();
+	}
+
+	public Long getMemberIdByToken(String token) {
+		return extractClaims(token).get("id", Long.class);
+	}
 }

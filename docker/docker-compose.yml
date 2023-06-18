@@ -1,7 +1,17 @@
 version: '3.0'
 
 services:
+  redis-token:
+    image: redis:latest
+    container_name: redis-token
+    command: redis-server --port 6379
+    ports:
+      - "6379:6379"
+
   rally-mate:
     image: phj0860/rally-mate:latest
+    restart: on-failure
+    depends_on:
+      - redis-token
     ports:
       - "9000:9000"

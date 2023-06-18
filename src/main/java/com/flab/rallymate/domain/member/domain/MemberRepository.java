@@ -11,4 +11,5 @@ import com.flab.rallymate.domain.member.constant.Status;
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
 	Optional<Member> findMemberByEmailAndStatus(String email, Status status);
+	Optional<Member> findByIdAndStatus(Long id, Status status);
 }
