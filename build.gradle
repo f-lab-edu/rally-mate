@@ -41,7 +41,7 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	compileOnly 'org.projectlombok:lombok'
 
-	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	implementation 'org.springframework.boot:spring-boot-configuration-processor'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// DB / ORM
@@ -82,6 +82,9 @@ dependencies {
 
 	// spring security
 	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '3.1.0'
+
+	// spring cloud openfeign
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.0.3'
 
 }
 

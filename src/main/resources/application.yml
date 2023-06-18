@@ -65,4 +65,4 @@ oauth2:
     kakao:
       client-id: ENC(3iVaxf+71Eq8Iq2VclE351wzXwnz+MvVxaCAnLTQYZ4k/WeofW9l6LIxmGndx1iA1p+ALMemTmDcC8mHn1AEqKJnjvItQ7F2R5kABavZOzs=)
       client-secret: ENC(caqSGl7DBfA+iisiuBYXVDM++j0f02TTnsXyrY/PPTyqL70JKmboffLaOd5g8gPorBzHnK7PZs6yHcmw6B0VlE5vWoS/8BVLIZDBf2fofqs=)
-      callback-url: http://localhost:9000/auth/kakao/callback
+      callback-url: http://localhost:9000/auth/login

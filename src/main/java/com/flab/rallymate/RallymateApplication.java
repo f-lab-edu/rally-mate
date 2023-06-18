@@ -4,15 +4,17 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
+@EnableFeignClients
 @EnableConfigurationProperties
-@ConfigurationPropertiesScan(basePackages = {"com.flab.rallymate.common.config",
-	"com.flab.rallymate.domain.oauth.config"})
+@ConfigurationPropertiesScan(basePackages = {"com.flab.rallymate.config",
+        "com.flab.rallymate.auth"})
 @SpringBootApplication
 public class RallymateApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(RallymateApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(RallymateApplication.class, args);
+    }
 
 }
