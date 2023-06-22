@@ -1,92 +1,88 @@
 package com.flab.rallymate.auth.jwt;
 
-import static com.flab.rallymate.auth.jwt.constant.TokenType.*;
-
-import com.flab.rallymate.domain.member.domain.Member;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.function.Function;
 
-@Slf4j
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import com.flab.rallymate.domain.member.constant.UserRole;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
 @Component
 public class JwtTokenProvider {
 
-    private Key secretKey;
-	public static final Long ACCESS_TOKEN_TIMEOUT = 1000 * 60 * 30L; // 30M
-	public static final Long REFRESH_TOKEN_TIMEOUT = 1000 * 60 * 60 * 24 * 7L;    // 7Day
-	public static final Long REFRESH_TOKEN_REISSUE_TIMEOUT = 1000 * 60 * 60 * 24 * 3L;    // 3Day
+	@Value("${jwt.secret-key}")
+	private String secretKey = "030605fa79b0bbb71a1cb00f20c160dd93426dc1bbc78881e0e7bbd495a1c0d8b705533c9bd5c1bdae573f5df7489b7b5259f5262ba23a9b59bec17390d3ce81";
 
-	@PostConstruct
-	protected void init() {
-		secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS512);
+	public static final long ACCESS_TOKEN_TIMEOUT = 1000 * 60 * 30L; // 30M
+	public static final long REFRESH_TOKEN_TIMEOUT = 1000 * 60 * 60 * 24 * 7L;    // 7Day
+	public static final long REFRESH_TOKEN_REISSUE_TIMEOUT = 1000 * 60 * 60 * 24 * 3L;    // 3Day
+
+	public String createAccessToken(String email, UserRole role) {
+		return generateToken(email, role, ACCESS_TOKEN_TIMEOUT);
 	}
 
-	public String createAccessToken(Member member) {
-		return generateToken(member, ACCESS_TOKEN_TIMEOUT);
+	public String createRefreshToken(String email, UserRole role) {
+		return generateToken(email, role, REFRESH_TOKEN_TIMEOUT);
 	}
 
-	public String createRefreshToken(Member member) {
-		return generateToken(member, REFRESH_TOKEN_TIMEOUT);
+	private Claims extractClaims(String token) {
+		return Jwts
+			.parserBuilder()
+			.setSigningKey(getSigningKey())
+			.build()
+			.parseClaimsJws(token)
+			.getBody();
 	}
 
-	private Key getKey() {
-		return Keys.hmacShaKeyFor(secretKey.getEncoded());
+	public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+		final Claims claims = extractClaims(token);
+		return claimsResolver.apply(claims);
 	}
 
-    private Claims extractClaims(String token) {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
+	public String getEmailByToken(String token) {
+		return Jwts.parserBuilder()
+			.setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))
+			.build()
+			.parseClaimsJws(token)
+			.getBody()
+			.getSubject();
+	}
 
+	public boolean isValidToken(String token) {
+		return getEmailByToken(token) != null && !isTokenExpired(token);
+	}
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractClaims(token);
-        return claimsResolver.apply(claims);
-    }
+	private boolean isTokenExpired(String token) {
+		return extractExpiration(token).before(new Date());
+	}
 
-    public String getEmailByToken(String token) {
-        return extractClaim(token, Claims::getSubject);
-    }
+	private Date extractExpiration(String token) {
+		return extractClaim(token, Claims::getExpiration);
+	}
 
-	public String getAccessToken(HttpServletRequest request) { return request.getHeader(X_ACCESS_TOKEN.label); }
-
-
-    public boolean isValidToken(String token) {
-        return (getEmailByToken(token) != null && !isTokenExpired(token));
-    }
-
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
-
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
-    }
-
-	private String generateToken(Member member, long expireDuration) {
-		Claims claims = Jwts.claims();
-		claims.put("id", member.getId());
+	private String generateToken(String email, UserRole role, long expireDuration) {
+		Claims claims = Jwts.claims().setSubject(email);
+		claims.put("roles", role.name());
 
 		return Jwts.builder()
 			.setClaims(claims)
-			.setSubject(member.getEmail())
 			.setIssuedAt(new Date(System.currentTimeMillis()))
 			.setExpiration(new Date(System.currentTimeMillis() + expireDuration))
-			.signWith(getKey())
+			.signWith(getSigningKey(), SignatureAlgorithm.HS512)
 			.compact();
+	}
+
+	private Key getSigningKey() {
+		byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
+		return Keys.hmacShaKeyFor(keyBytes);
 	}
 
 	public long getRemainMilliSeconds(String token) {

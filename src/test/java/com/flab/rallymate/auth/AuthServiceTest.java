@@ -19,6 +19,7 @@ import com.flab.rallymate.auth.jwt.RefreshTokenRedisRepository;
 import com.flab.rallymate.auth.jwt.dto.RefreshToken;
 import com.flab.rallymate.domain.member.MemberService;
 import com.flab.rallymate.domain.member.constant.Status;
+import com.flab.rallymate.domain.member.constant.UserRole;
 import com.flab.rallymate.domain.member.domain.Member;
 import com.flab.rallymate.domain.member.dto.MemberJoinRequestDTO;
 
@@ -52,11 +53,10 @@ class AuthServiceTest {
 		String redirectURL = "redirectURL";
 
 		String sampleAuthCode = "sampleAuthCode";
-		RefreshToken refreshToken = new RefreshToken(1L, "sampleRefreshToken", 10L);
+		RefreshToken refreshToken = new RefreshToken("hj@kakao.com", "sampleRefreshToken", 10L);
 		KakaoTokenResponseDTO sampleToken = new KakaoTokenResponseDTO("sampleAccesstoken", "sampleRefreshToken");
-		KakaoUserResponseDTO kakaoUser = new KakaoUserResponseDTO(1L, "hj@kakao.com", "nathan");
-		Member savedMember = new Member(1L, "nathan", "hj@kakao.com", "encryptedPassword", Status.USED,
-			LocalDateTime.now());
+		KakaoUserResponseDTO kakaoUser = new KakaoUserResponseDTO(1L, "nathan", "hj@kakao.com");
+		Member savedMember = new Member(1L, "nathan", "hj@kakao.com", "encryptedPassword", Status.USED, UserRole.ROLE_USER, LocalDateTime.now());
 
 		when(kakaoAuthClient.requestToken(
 			KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, sampleAuthCode).toString()))
@@ -78,11 +78,10 @@ class AuthServiceTest {
 		String clientId = "clientId";
 		String redirectURL = "redirectURL";
 		String sampleAuthCode = "sampleAuthCode";
-		RefreshToken refreshToken = new RefreshToken(1L, "sampleRefreshToken", 10L);
-		KakaoUserResponseDTO kakaoUser = new KakaoUserResponseDTO(1L, "hj@kakao.com", "nathan");
+		RefreshToken refreshToken = new RefreshToken("hj@kakao.com", "sampleRefreshToken", 10L);
+		KakaoUserResponseDTO kakaoUser = new KakaoUserResponseDTO(1L, "nathan", "hj@kakao.com");
 		KakaoTokenResponseDTO sampleToken = new KakaoTokenResponseDTO("sampleAccesstoken", "sampleRefreshToken");
-		Member savedMember = new Member(1L, "nathan", "hj@kakao.com", "encryptedPassword", Status.USED,
-			LocalDateTime.now());
+		Member savedMember = new Member(1L, "nathan", "hj@kakao.com", "encryptedPassword", Status.USED, UserRole.ROLE_USER, LocalDateTime.now());
 
 		when(kakaoAuthClient.requestToken(
 			KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, sampleAuthCode).toString()))
@@ -105,10 +104,10 @@ class AuthServiceTest {
 		String sampleAuthCode = "sampleAuthCode";
 		KakaoTokenResponseDTO sampleToken = new KakaoTokenResponseDTO("sampleAccesstoken", "sampleRefreshToken");
 		String jwtAccessToken = "jwtAccessToken";
-		RefreshToken refreshToken = new RefreshToken(1L, "sampleRefreshToken", 10L);
+		RefreshToken refreshToken = new RefreshToken("hj@kakao.com", "sampleRefreshToken", 10L);
 
-		KakaoUserResponseDTO kakaoUser = new KakaoUserResponseDTO(1L, "hj@kakao.com", "nathan");
-		Member findMember = Member.createMember("네이선", "hj@kakao.com", "password");
+		KakaoUserResponseDTO kakaoUser = new KakaoUserResponseDTO(1L, "nathan", "hj@kakao.com");
+		Member findMember = Member.createMember("네이선", "hj@kakao.com", "password", UserRole.ROLE_USER);
 
 		when(kakaoAuthClient.requestToken(
 			KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, sampleAuthCode).toString()))
@@ -117,14 +116,14 @@ class AuthServiceTest {
 			.thenReturn(ResponseEntity.ok(
 				"{\"id\": 1, \"kakao_account\": {\"email\": \"hj@kakao.com\"}, \"properties\": {\"nickname\": \"nathan\"}}"));
 		when(memberService.findMemberBy(kakaoUser.email())).thenReturn(Optional.of(findMember));
-		when(jwtTokenProvider.createAccessToken(findMember)).thenReturn(jwtAccessToken);
+		when(jwtTokenProvider.createAccessToken(findMember.getEmail(), findMember.getUserRole())).thenReturn(jwtAccessToken);
 		when(refreshTokenRedisRepository.save(any(RefreshToken.class))).thenReturn(refreshToken);
 
 		authService.kakaoLogin(sampleAuthCode);
 
 		verify(memberService).findMemberBy(kakaoUser.email());
-		verify(jwtTokenProvider).createAccessToken(findMember);
-		verify(jwtTokenProvider).createRefreshToken(findMember);
+		verify(jwtTokenProvider).createAccessToken(findMember.getEmail(), findMember.getUserRole());
+		verify(jwtTokenProvider).createRefreshToken(findMember.getEmail(), findMember.getUserRole());
 	}
 
 	@Test
@@ -134,12 +133,12 @@ class AuthServiceTest {
 		String sampleAuthCode = "sampleAuthCode";
 		KakaoTokenResponseDTO sampleToken = new KakaoTokenResponseDTO("sampleAccesstoken", "sampleRefreshToken");
 		String jwtAccessToken = "jwtAccessToken";
-		RefreshToken refreshToken = new RefreshToken(1L, "sampleRefreshToken", 10L);
+		RefreshToken refreshToken = new RefreshToken("hj@kakao.com", "sampleRefreshToken", 10L);
 
-		KakaoUserResponseDTO kakaoUser = new KakaoUserResponseDTO(1L, "hj@kakao.com", "nathan");
+		KakaoUserResponseDTO kakaoUser = new KakaoUserResponseDTO(1L, "nathan", "hj@kakao.com");
 		MemberJoinRequestDTO memberJoinReq = MemberJoinRequestDTO.of(kakaoUser.nickname(), kakaoUser.email(),
 			"encryptedPassword");
-		Member savedMember = Member.createMember("nathan", "hj@kakao.com", "encryptedPassword");
+		Member savedMember = Member.createMember("nathan", "hj@kakao.com", "encryptedPassword", UserRole.ROLE_USER);
 
 		when(kakaoAuthClient.requestToken(
 			KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, sampleAuthCode).toString()))
@@ -149,7 +148,7 @@ class AuthServiceTest {
 				"{\"id\": 1, \"kakao_account\": {\"email\": \"hj@kakao.com\"}, \"properties\": {\"nickname\": \"nathan\"}}"));
 		when(memberService.findMemberBy(kakaoUser.email())).thenReturn(Optional.empty());
 		when(memberService.join(memberJoinReq)).thenReturn(savedMember);
-		when(jwtTokenProvider.createAccessToken(savedMember)).thenReturn(jwtAccessToken);
+		when(jwtTokenProvider.createAccessToken(savedMember.getEmail(), savedMember.getUserRole())).thenReturn(jwtAccessToken);
 		when(passwordEncoder.encode(anyString())).thenReturn("encryptedPassword");
 		when(refreshTokenRedisRepository.save(any(RefreshToken.class))).thenReturn(refreshToken);
 
@@ -157,7 +156,7 @@ class AuthServiceTest {
 
 		verify(memberService).findMemberBy(kakaoUser.email());
 		verify(memberService).join(memberJoinReq);
-		verify(jwtTokenProvider).createAccessToken(savedMember);
-		verify(jwtTokenProvider).createRefreshToken(savedMember);
+		verify(jwtTokenProvider).createAccessToken(savedMember.getEmail(), savedMember.getUserRole());
+		verify(jwtTokenProvider).createRefreshToken(savedMember.getEmail(), savedMember.getUserRole());
 	}
 }

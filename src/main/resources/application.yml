@@ -60,3 +60,6 @@ oauth2:
       client-id: ENC(3iVaxf+71Eq8Iq2VclE351wzXwnz+MvVxaCAnLTQYZ4k/WeofW9l6LIxmGndx1iA1p+ALMemTmDcC8mHn1AEqKJnjvItQ7F2R5kABavZOzs=)
       client-secret: ENC(caqSGl7DBfA+iisiuBYXVDM++j0f02TTnsXyrY/PPTyqL70JKmboffLaOd5g8gPorBzHnK7PZs6yHcmw6B0VlE5vWoS/8BVLIZDBf2fofqs=)
       callback-url: http://localhost:9000/auth/login
+
+jwt:
+  secret-key: ENC(ZUoGVZDCb3/+f+xZTlBFW5591u90xpzKo1xB3rBlQ8PXiI7dFrvbYn1dxsekH+0eM3xiIPYxdJVelqiYnMPO1Ig5yRBxs5NU3p2qHQk2WU1v0U4799tZrf1giOJzdtVdh7bAE6YUwXe8SOnjGHc6V6FZYwG7Wv+Qqfsla4+fQLjERIR+RsGsMiTiLRCT7efWjNng1m7HL/f5LDPalalJGjiEopfFMBMHa4r0KJBECrc=)

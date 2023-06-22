@@ -4,7 +4,8 @@ CREATE TABLE `member` (
 	`email`	VARCHAR(100)	NOT NULL,
 	`password` TEXT NOT NULL,
 	`status`    VARCHAR(30) NOT NULL DEFAULT 'USED',
-	`created_time` TIMESTAMP NOT NULL
+	`created_time` TIMESTAMP NOT NULL,
+    `user_role` VARCHAR(30) NOT NULL
 );
 
 

@@ -1,6 +1,7 @@
 package com.flab.rallymate.domain.member;
 
 import static com.flab.rallymate.domain.member.constant.Status.*;
+import static com.flab.rallymate.domain.member.constant.UserRole.*;
 
 import java.util.Optional;
 
@@ -27,7 +28,7 @@ public class MemberService {
 	@Transactional
 	public Member join(MemberJoinRequestDTO joinReq) {
 		String password = passwordEncoder.encode(joinReq.password());
-		Member member = Member.createMember(joinReq.name(), joinReq.email(), password);
+		Member member = Member.createMember(joinReq.name(), joinReq.email(), password, ROLE_USER);
 
 		Member savedMember = memberRepository.save(member);
 		return savedMember;

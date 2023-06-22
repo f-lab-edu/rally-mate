@@ -50,8 +50,8 @@ public class AuthService {
 
 		KakaoUserResponseDTO kakaoUser = KakaoUserResponseDTO.of(
 			body.getLong("id"),
-			body.getJSONObject("kakao_account").getString("email"),
-			body.getJSONObject("properties").getString("nickname")
+			body.getJSONObject("properties").getString("nickname"),
+			body.getJSONObject("kakao_account").getString("email")
 		);
 
 		Optional<Member> findMember = memberService.findMemberBy(kakaoUser.email());
@@ -71,14 +71,15 @@ public class AuthService {
 	}
 
 	private LoginResponseDTO createLoginResponse(Member member) {
-		String accessToken = jwtTokenProvider.createAccessToken(member);
+		String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getUserRole());
 		RefreshToken refreshToken = saveRefreshToken(member);
 
 		return LoginResponseDTO.of(member.getId(), accessToken, refreshToken.getRefreshToken());
 	}
 
 	private RefreshToken saveRefreshToken(Member member) {
-		return refreshTokenRedisRepository.save(RefreshToken.of(member.getId(),
-			jwtTokenProvider.createRefreshToken(member), JwtTokenProvider.REFRESH_TOKEN_TIMEOUT));
+		return refreshTokenRedisRepository.save(RefreshToken.of(member.getEmail(),
+			jwtTokenProvider.createRefreshToken(member.getEmail(), member.getUserRole()),
+			JwtTokenProvider.REFRESH_TOKEN_TIMEOUT));
 	}
 }

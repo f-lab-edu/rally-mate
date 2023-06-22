@@ -1,8 +1,10 @@
 package com.flab.rallymate.domain.member.domain;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import com.flab.rallymate.domain.member.constant.Status;
+import com.flab.rallymate.domain.member.constant.UserRole;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,23 +45,29 @@ public class Member {
 	@Column(name = "created_time", nullable = false)
 	private LocalDateTime createdTime;
 
+	@Enumerated(EnumType.STRING)
+	@Column(name = "user_role")
+	private UserRole userRole;
+
 	@Builder
-	public Member(Long id, String name, String email, String password, Status status, LocalDateTime createdTime) {
+	public Member(Long id, String name, String email, String password, Status status, UserRole userRole, LocalDateTime createdTime) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.password = password;
 		this.status = status;
+		this.userRole = Objects.isNull(userRole) ? UserRole.ROLE_USER : userRole;
 		this.createdTime = createdTime;
 	}
 
-	public static Member createMember(String name, String email, String password) {
+	public static Member createMember(String name, String email, String password, UserRole userRole) {
 		return Member.builder()
 			.name(name)
 			.email(email)
 			.password(password)
 			.status(Status.USED)
 			.createdTime(LocalDateTime.now())
+			.userRole(userRole)
 			.build();
 	}
 }

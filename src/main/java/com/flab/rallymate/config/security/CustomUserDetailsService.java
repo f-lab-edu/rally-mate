@@ -2,6 +2,8 @@ package com.flab.rallymate.config.security;
 
 import static com.flab.rallymate.error.ErrorCode.*;
 
+import java.util.List;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -26,6 +28,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		Member member = memberRepository.findMemberByEmailAndStatus(email, Status.USED)
 			.orElseThrow(() -> new BaseException(NOT_FOUND_MEMBER));
-		return new CustomUserDetails(member.getEmail(), member.getPassword(), member.getName());
+		return new CustomUserDetails(member.getEmail(), member.getPassword(), List.of(member.getUserRole().getValue()));
 	}
 }

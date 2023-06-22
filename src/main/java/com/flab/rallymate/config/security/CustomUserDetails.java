@@ -1,8 +1,11 @@
 package com.flab.rallymate.config.security;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import lombok.AccessLevel;
@@ -15,17 +18,17 @@ public class CustomUserDetails implements UserDetails {
 
 	private String email;
 	private String password;
-	private String name;
+	private List<String> roles;
 
-	public CustomUserDetails(String email, String password, String name) {
+	public CustomUserDetails(String email, String password, List<String> roles) {
 		this.email = email;
 		this.password = password;
-		this.name = name;
+		this.roles = roles;
 	}
 
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return null;
+		return roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 	}
 
 	@Override

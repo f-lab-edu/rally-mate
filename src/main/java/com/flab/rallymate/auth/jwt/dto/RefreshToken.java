@@ -1,10 +1,10 @@
 package com.flab.rallymate.auth.jwt.dto;
 
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.TimeToLive;
 import org.springframework.data.redis.core.index.Indexed;
 
-import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class RefreshToken {
 
 	@Id
-	private Long id;
+	private String email;
 
 	@Indexed
 	private String refreshToken;
@@ -25,15 +25,15 @@ public class RefreshToken {
 	private Long expiration;
 
 	@Builder
-	public RefreshToken(Long id, String refreshToken, Long expiration) {
-		this.id = id;
+	public RefreshToken(String email, String refreshToken, Long expiration) {
+		this.email = email;
 		this.refreshToken = refreshToken;
 		this.expiration = expiration;
 	}
 
-	public static RefreshToken of(Long memberId, String refreshToken, Long expiration) {
+	public static RefreshToken of(String email, String refreshToken, Long expiration) {
 		return RefreshToken.builder()
-			.id(memberId)
+			.email(email)
 			.refreshToken(refreshToken)
 			.expiration(expiration / 1_000)
 			.build();
