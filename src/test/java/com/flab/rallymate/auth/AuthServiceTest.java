@@ -49,14 +49,12 @@ class AuthServiceTest {
 
 	@Test
 	void kakaoLogin_넘어온_authCode로_카카오API를_호출한다() throws Exception {
-		String clientId = "clientId";
-		String redirectURL = "redirectURL";
-
 		String sampleAuthCode = "sampleAuthCode";
 		RefreshToken refreshToken = new RefreshToken("hj@kakao.com", "sampleRefreshToken", 10L);
 		KakaoTokenResponseDTO sampleToken = new KakaoTokenResponseDTO("sampleAccesstoken", "sampleRefreshToken");
 		KakaoUserResponseDTO kakaoUser = new KakaoUserResponseDTO(1L, "nathan", "hj@kakao.com");
 		Member savedMember = new Member(1L, "nathan", "hj@kakao.com", "encryptedPassword", Status.USED, UserRole.ROLE_USER, LocalDateTime.now());
+
 
 		when(kakaoAuthClient.requestToken(
 			KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, sampleAuthCode).toString()))
@@ -67,8 +65,8 @@ class AuthServiceTest {
 		when(memberService.findMemberBy(kakaoUser.email())).thenReturn(Optional.of(savedMember));
 		when(refreshTokenRedisRepository.save(any(RefreshToken.class))).thenReturn(refreshToken);
 
-		authService.kakaoLogin(sampleAuthCode);
 
+		authService.kakaoLogin(sampleAuthCode);
 		verify(kakaoAuthClient).requestToken(
 			KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, sampleAuthCode).toString());
 	}
@@ -83,6 +81,7 @@ class AuthServiceTest {
 		KakaoTokenResponseDTO sampleToken = new KakaoTokenResponseDTO("sampleAccesstoken", "sampleRefreshToken");
 		Member savedMember = new Member(1L, "nathan", "hj@kakao.com", "encryptedPassword", Status.USED, UserRole.ROLE_USER, LocalDateTime.now());
 
+
 		when(kakaoAuthClient.requestToken(
 			KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, sampleAuthCode).toString()))
 			.thenReturn(sampleToken);
@@ -92,8 +91,8 @@ class AuthServiceTest {
 		when(memberService.findMemberBy(kakaoUser.email())).thenReturn(Optional.of(savedMember));
 		when(refreshTokenRedisRepository.save(any(RefreshToken.class))).thenReturn(refreshToken);
 
-		authService.kakaoLogin(sampleAuthCode);
 
+		authService.kakaoLogin(sampleAuthCode);
 		verify(kakaoInfoClient).getUserInfo("Bearer " + sampleToken.accessToken());
 	}
 
@@ -105,7 +104,6 @@ class AuthServiceTest {
 		KakaoTokenResponseDTO sampleToken = new KakaoTokenResponseDTO("sampleAccesstoken", "sampleRefreshToken");
 		String jwtAccessToken = "jwtAccessToken";
 		RefreshToken refreshToken = new RefreshToken("hj@kakao.com", "sampleRefreshToken", 10L);
-
 		KakaoUserResponseDTO kakaoUser = new KakaoUserResponseDTO(1L, "nathan", "hj@kakao.com");
 		Member findMember = Member.createMember("네이선", "hj@kakao.com", "password", UserRole.ROLE_USER);
 
@@ -119,8 +117,8 @@ class AuthServiceTest {
 		when(jwtTokenProvider.createAccessToken(findMember.getEmail(), findMember.getUserRole())).thenReturn(jwtAccessToken);
 		when(refreshTokenRedisRepository.save(any(RefreshToken.class))).thenReturn(refreshToken);
 
-		authService.kakaoLogin(sampleAuthCode);
 
+		authService.kakaoLogin(sampleAuthCode);
 		verify(memberService).findMemberBy(kakaoUser.email());
 		verify(jwtTokenProvider).createAccessToken(findMember.getEmail(), findMember.getUserRole());
 		verify(jwtTokenProvider).createRefreshToken(findMember.getEmail(), findMember.getUserRole());
@@ -134,11 +132,11 @@ class AuthServiceTest {
 		KakaoTokenResponseDTO sampleToken = new KakaoTokenResponseDTO("sampleAccesstoken", "sampleRefreshToken");
 		String jwtAccessToken = "jwtAccessToken";
 		RefreshToken refreshToken = new RefreshToken("hj@kakao.com", "sampleRefreshToken", 10L);
-
 		KakaoUserResponseDTO kakaoUser = new KakaoUserResponseDTO(1L, "nathan", "hj@kakao.com");
 		MemberJoinRequestDTO memberJoinReq = MemberJoinRequestDTO.of(kakaoUser.nickname(), kakaoUser.email(),
 			"encryptedPassword");
 		Member savedMember = Member.createMember("nathan", "hj@kakao.com", "encryptedPassword", UserRole.ROLE_USER);
+
 
 		when(kakaoAuthClient.requestToken(
 			KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, sampleAuthCode).toString()))
@@ -152,8 +150,8 @@ class AuthServiceTest {
 		when(passwordEncoder.encode(anyString())).thenReturn("encryptedPassword");
 		when(refreshTokenRedisRepository.save(any(RefreshToken.class))).thenReturn(refreshToken);
 
-		authService.kakaoLogin(sampleAuthCode);
 
+		authService.kakaoLogin(sampleAuthCode);
 		verify(memberService).findMemberBy(kakaoUser.email());
 		verify(memberService).join(memberJoinReq);
 		verify(jwtTokenProvider).createAccessToken(savedMember.getEmail(), savedMember.getUserRole());

@@ -1,18 +1,19 @@
-package com.flab.rallymate.api;
+package com.flab.rallymate.auth.rest;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
+import com.flab.rallymate.api.AuthController;
+import com.flab.rallymate.auth.AuthService;
+import com.flab.rallymate.auth.config.KakaoOAuthProperties;
+import com.flab.rallymate.auth.dto.LoginResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.flab.rallymate.auth.AuthService;
-import com.flab.rallymate.auth.config.KakaoOAuthProperties;
-import com.flab.rallymate.auth.dto.LoginResponseDTO;
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class AuthControllerTest {
 	private MockMvc client;
