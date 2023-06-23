@@ -22,7 +22,7 @@ public class JwtTokenProvider {
 	private String secretKey = "030605fa79b0bbb71a1cb00f20c160dd93426dc1bbc78881e0e7bbd495a1c0d8b705533c9bd5c1bdae573f5df7489b7b5259f5262ba23a9b59bec17390d3ce81";
 
 	public static final long ACCESS_TOKEN_TIMEOUT = 1000 * 60 * 30L; // 30M
-	public static final long REFRESH_TOKEN_TIMEOUT = 1000 * 60 * 60 * 24 * 7L;    // 7Day
+	public static final long REFRESH_TOKEN_TIMEOUT = 1000 * 60 * 60 * 2L;    // 2H
 	public static final long REFRESH_TOKEN_REISSUE_TIMEOUT = 1000 * 60 * 60 * 24 * 3L;    // 3Day
 
 	public String createAccessToken(String email, UserRole role) {
