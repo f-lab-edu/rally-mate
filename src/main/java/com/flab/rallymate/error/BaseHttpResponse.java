@@ -1,16 +1,14 @@
 package com.flab.rallymate.error;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,8 +27,12 @@ public class BaseHttpResponse<T> {
         return new BaseHttpResponse<>(SUCCESS, data, null);
     }
 
-    public static BaseHttpResponse<?> successWithNoContent() {
+    public static <T> BaseHttpResponse<T> successWithNoContent() {
         return new BaseHttpResponse<>(SUCCESS, null, null);
+    }
+
+    public static <T> BaseHttpResponse<T> successWithNoContent(String message) {
+        return new BaseHttpResponse<>(SUCCESS, null, message);
     }
 
     public static BaseHttpResponse<?> fail(BindingResult bindingResult) {

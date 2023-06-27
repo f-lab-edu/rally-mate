@@ -5,6 +5,9 @@ import static com.flab.rallymate.domain.member.constant.UserRole.*;
 
 import java.util.Optional;
 
+import com.flab.rallymate.config.security.CustomUserDetails;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +45,12 @@ public class MemberService {
 	@Transactional(readOnly = true)
 	public Optional<Member> findMemberBy(Long memberId) {
 		return memberRepository.findByIdAndStatus(memberId, USED);
+	}
+
+	public String getCurrentMemberEmail() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		CustomUserDetails principal = (CustomUserDetails) authentication.getPrincipal();
+  		return principal.getUsername();
 	}
 
 }
