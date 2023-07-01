@@ -1,6 +1,6 @@
 package com.flab.rallymate.auth.dto;
 
-import com.flab.rallymate.auth.config.KakaoOAuthProperties;
+import com.flab.rallymate.config.oauth.KakaoOAuthProperties;
 
 public record KakaoTokenRequestDTO(
 	String grantType,

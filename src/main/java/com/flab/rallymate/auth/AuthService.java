@@ -1,85 +1,75 @@
 package com.flab.rallymate.auth;
 
-import java.util.Optional;
-
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.flab.rallymate.auth.config.KakaoOAuthProperties;
 import com.flab.rallymate.auth.dto.KakaoTokenRequestDTO;
-import com.flab.rallymate.auth.dto.KakaoTokenResponseDTO;
-import com.flab.rallymate.auth.dto.KakaoUserResponseDTO;
 import com.flab.rallymate.auth.dto.LoginResponseDTO;
 import com.flab.rallymate.auth.jwt.JwtTokenProvider;
 import com.flab.rallymate.auth.jwt.RefreshTokenRedisRepository;
 import com.flab.rallymate.auth.jwt.dto.RefreshToken;
+import com.flab.rallymate.config.oauth.KakaoOAuthProperties;
 import com.flab.rallymate.domain.member.MemberService;
 import com.flab.rallymate.domain.member.domain.Member;
 import com.flab.rallymate.domain.member.dto.MemberJoinRequestDTO;
-
+import com.flab.rallymate.error.BaseException;
+import com.flab.rallymate.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class AuthService {
 
-	private final KakaoAuthClient kakaoAuthClient;
-	private final KakaoInfoClient kakaoInfoClient;
-	private final KakaoOAuthProperties kakaoOAuthProperties;
+    private final KakaoAuthClient kakaoAuthClient;
+    private final KakaoInfoClient kakaoInfoClient;
+    private final KakaoOAuthProperties kakaoOAuthProperties;
 
-	private final MemberService memberService;
-	private final PasswordEncoder passwordEncoder;
+    private final MemberService memberService;
+    private final PasswordEncoder passwordEncoder;
 
-	private final JwtTokenProvider jwtTokenProvider;
-	private final RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenRedisRepository refreshTokenRedisRepository;
 
-	public LoginResponseDTO kakaoLogin(String authCode) throws JSONException {
-		KakaoTokenResponseDTO kakaoTokenResponseDTO = kakaoAuthClient.requestToken(
-			KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, authCode).toString()
-		);
+    public LoginResponseDTO kakaoLogin(String authCode) {
+        var kakaoTokenResponse = kakaoAuthClient.requestToken(
+                KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, authCode).toString()
+        );
 
-		ResponseEntity<String> kakaoUserResponse = kakaoInfoClient.getUserInfo(
-			"Bearer " + kakaoTokenResponseDTO.accessToken());
+        var kakaoUserResponse = kakaoInfoClient.getUserInfo(
+                "Bearer " + kakaoTokenResponse.accessToken());
 
-		JSONObject body = new JSONObject(kakaoUserResponse.getBody());
+        if (kakaoUserResponse.id() == null)
+            throw new BaseException(ErrorCode.NOT_FOUND_MEMBER);
 
-		KakaoUserResponseDTO kakaoUser = KakaoUserResponseDTO.of(
-			body.getLong("id"),
-			body.getJSONObject("properties").getString("nickname"),
-			body.getJSONObject("kakao_account").getString("email")
-		);
+        Optional<Member> findMember = memberService.findMemberBy(kakaoUserResponse.kakaoAccount().email());
 
-		Optional<Member> findMember = memberService.findMemberBy(kakaoUser.email());
+        if (findMember.isEmpty()) {
+            MemberJoinRequestDTO joinReq = MemberJoinRequestDTO.of(
+				kakaoUserResponse.properties().nickname(),
+				kakaoUserResponse.kakaoAccount().email(),
+				passwordEncoder.encode(kakaoUserResponse.id() + kakaoOAuthProperties.getClientSecret())
+            );
 
-		if (findMember.isEmpty()) {
-			MemberJoinRequestDTO joinReq = MemberJoinRequestDTO.of(
-				kakaoUser.nickname(),
-				kakaoUser.email(),
-				passwordEncoder.encode(kakaoUser.id() + kakaoOAuthProperties.getClientSecret())
-			);
+            Member savedMember = memberService.join(joinReq);
+            return createLoginResponse(savedMember);
+        }
 
-			Member savedMember = memberService.join(joinReq);
-			return createLoginResponse(savedMember);
-		}
+        return createLoginResponse(findMember.get());
+    }
 
-		return createLoginResponse(findMember.get());
-	}
+    private LoginResponseDTO createLoginResponse(Member member) {
+        String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getUserRole());
+        RefreshToken refreshToken = saveRefreshToken(member);
 
-	private LoginResponseDTO createLoginResponse(Member member) {
-		String accessToken = jwtTokenProvider.createAccessToken(member.getEmail(), member.getUserRole());
-		RefreshToken refreshToken = saveRefreshToken(member);
+        return LoginResponseDTO.of(member.getId(), accessToken, refreshToken.getRefreshToken());
+    }
 
-		return LoginResponseDTO.of(member.getId(), accessToken, refreshToken.getRefreshToken());
-	}
-
-	private RefreshToken saveRefreshToken(Member member) {
-		return refreshTokenRedisRepository.save(RefreshToken.of(member.getEmail(),
-			jwtTokenProvider.createRefreshToken(member.getEmail(), member.getUserRole()),
-			JwtTokenProvider.REFRESH_TOKEN_TIMEOUT));
-	}
+    private RefreshToken saveRefreshToken(Member member) {
+        return refreshTokenRedisRepository.save(RefreshToken.of(member.getEmail(),
+                jwtTokenProvider.createRefreshToken(member.getEmail(), member.getUserRole()),
+                JwtTokenProvider.REFRESH_TOKEN_TIMEOUT));
+    }
 }

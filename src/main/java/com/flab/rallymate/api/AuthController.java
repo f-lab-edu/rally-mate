@@ -1,27 +1,19 @@
 package com.flab.rallymate.api;
 
-import java.io.IOException;
-
-import org.springframework.boot.configurationprocessor.json.JSONException;
+import com.flab.rallymate.auth.AuthService;
+import com.flab.rallymate.auth.dto.LoginResponseDTO;
+import com.flab.rallymate.config.oauth.KakaoOAuthProperties;
+import com.flab.rallymate.error.BaseHttpResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.flab.rallymate.auth.AuthService;
-import com.flab.rallymate.auth.config.KakaoOAuthProperties;
-import com.flab.rallymate.auth.dto.LoginResponseDTO;
-import com.flab.rallymate.error.BaseException;
-import com.flab.rallymate.error.BaseHttpResponse;
-import com.flab.rallymate.error.ErrorCode;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
+import java.io.IOException;
 
 @Tag(name = "auth", description = "인증 API")
 @RestController
@@ -49,16 +41,10 @@ public class AuthController {
 	}
 
 	@GetMapping("/login")
-	@Operation(summary = "카카오 로그인 API", responses = {
-		@ApiResponse(responseCode = "200", description = "로그인 성공", content = @Content(schema = @Schema(implementation = LoginResponseDTO.class)))
-	})
+	@Operation(summary = "카카오 로그인 API")
 	public BaseHttpResponse<LoginResponseDTO> login(@RequestParam String code) {
-		try {
-			LoginResponseDTO loginResponseDTO = authService.kakaoLogin(code);
-			return BaseHttpResponse.success(loginResponseDTO);
-		} catch (JSONException e) {
-			throw new BaseException(ErrorCode.NOT_FOUND_KAKAO_USER_INFO);
-		}
+		LoginResponseDTO loginResponseDTO = authService.kakaoLogin(code);
+		return BaseHttpResponse.success(loginResponseDTO);
 	}
 }
 
