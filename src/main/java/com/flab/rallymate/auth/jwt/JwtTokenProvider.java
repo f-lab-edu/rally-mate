@@ -56,11 +56,7 @@ public class JwtTokenProvider {
 			.getSubject();
 	}
 
-	public boolean isValidToken(String token) {
-		return getEmailByToken(token) != null && !isTokenExpired(token);
-	}
-
-	private boolean isTokenExpired(String token) {
+	public boolean isTokenExpired(String token) {
 		return extractExpiration(token).before(new Date());
 	}
 
