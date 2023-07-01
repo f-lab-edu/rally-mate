@@ -1,9 +1,10 @@
-package com.flab.rallymate.config.security;
+package com.flab.rallymate.auth;
 
 import static com.flab.rallymate.error.ErrorCode.*;
 
 import java.util.List;
 
+import com.flab.rallymate.auth.model.CustomUserDetails;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

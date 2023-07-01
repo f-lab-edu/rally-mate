@@ -1,4 +1,4 @@
-package com.flab.rallymate.auth.config;
+package com.flab.rallymate.config.oauth;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.bind.ConstructorBinding;

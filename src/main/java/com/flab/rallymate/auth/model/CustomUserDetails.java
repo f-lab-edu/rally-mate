@@ -1,4 +1,4 @@
-package com.flab.rallymate.config.security;
+package com.flab.rallymate.auth.model;
 
 import java.util.Collection;
 import java.util.List;
