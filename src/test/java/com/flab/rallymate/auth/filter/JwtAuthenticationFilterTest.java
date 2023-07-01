@@ -2,8 +2,8 @@ package com.flab.rallymate.auth.filter;
 
 import com.flab.rallymate.auth.jwt.JwtAuthenticationFilter;
 import com.flab.rallymate.auth.jwt.JwtTokenProvider;
-import com.flab.rallymate.config.security.CustomUserDetails;
-import com.flab.rallymate.config.security.CustomUserDetailsService;
+import com.flab.rallymate.auth.model.CustomUserDetails;
+import com.flab.rallymate.auth.CustomUserDetailsService;
 import com.flab.rallymate.domain.member.constant.UserRole;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.BeforeEach;
@@ -73,7 +73,7 @@ class JwtAuthenticationFilterTest {
 
     private String getJwtToken(String email) {
         JwtTokenProvider tokenProvider = new JwtTokenProvider();
-        return tokenProvider.createAccessToken(email, UserRole.ROLE_ADMIN);
+        return "Bearer " + tokenProvider.createAccessToken(email, UserRole.ROLE_ADMIN);
     }
 
 }

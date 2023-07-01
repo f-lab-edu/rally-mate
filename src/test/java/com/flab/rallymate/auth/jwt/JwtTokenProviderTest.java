@@ -1,6 +1,6 @@
 package com.flab.rallymate.auth.jwt;
 
-import com.flab.rallymate.config.security.CustomUserDetails;
+import com.flab.rallymate.auth.model.CustomUserDetails;
 import com.flab.rallymate.domain.member.constant.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -18,16 +18,11 @@ public class JwtTokenProviderTest {
 
 
     private JwtTokenProvider sut;
-    //    private String secretKey;
-//
-//    private byte[] secretKeyBytes;
     private CustomUserDetails userDetails;
 
 
     @BeforeEach
     void setUp() {
-//        secretKey = "782c178d6cb13d083a5feb4ef5a2bcd1420775e13df0d0cea81d020f0af4c43f";
-//        secretKeyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
         userDetails = new CustomUserDetails("nathan@kakao.com", "samplePassword", Collections.singletonList(UserRole.ROLE_USER.name()));
         sut = new JwtTokenProvider();
     }

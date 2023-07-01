@@ -2,7 +2,7 @@ package com.flab.rallymate.auth.rest;
 
 import com.flab.rallymate.api.AuthController;
 import com.flab.rallymate.auth.AuthService;
-import com.flab.rallymate.auth.config.KakaoOAuthProperties;
+import com.flab.rallymate.config.oauth.KakaoOAuthProperties;
 import com.flab.rallymate.auth.dto.LoginResponseDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
