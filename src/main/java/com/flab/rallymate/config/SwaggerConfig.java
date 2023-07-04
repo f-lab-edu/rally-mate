@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 	name = "Bearer Authentication",
 	type = SecuritySchemeType.APIKEY,
 	in = SecuritySchemeIn.HEADER,
-	paramName = "X-ACCESS-TOKEN",
+	paramName =	"Authorization",
 	scheme = "bearer"
 )
 public class SwaggerConfig {

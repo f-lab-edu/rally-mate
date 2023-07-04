@@ -8,10 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
@@ -26,7 +23,7 @@ public class AuthController {
 
 	@GetMapping("/kakao")
 	@Operation(summary = "카카오 로그인 페이지 요청 API")
-	public void test(HttpServletResponse response) {
+	public void requestKakaoLoginPage(HttpServletResponse response) {
 
 		StringBuilder url = new StringBuilder("https://kauth.kakao.com/oauth/authorize?");
 		url.append("client_id=").append(kakaoOAuthProperties.getClientId());
@@ -43,7 +40,13 @@ public class AuthController {
 	@GetMapping("/login")
 	@Operation(summary = "카카오 로그인 API")
 	public BaseHttpResponse<LoginResponseDTO> login(@RequestParam String code) {
-		LoginResponseDTO loginResponseDTO = authService.kakaoLogin(code);
+		var loginResponseDTO = authService.kakaoLogin(code);
+		return BaseHttpResponse.success(loginResponseDTO);
+	}
+
+	@PostMapping("/re-issue")
+	public BaseHttpResponse<LoginResponseDTO> reIssue(@RequestHeader("RefreshToken") String refreshToken) {
+		var loginResponseDTO = authService.reIssue(refreshToken);
 		return BaseHttpResponse.success(loginResponseDTO);
 	}
 }

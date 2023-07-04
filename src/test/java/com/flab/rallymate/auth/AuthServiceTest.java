@@ -1,14 +1,5 @@
 package com.flab.rallymate.auth;
 
-import static org.mockito.Mockito.*;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
 import com.flab.rallymate.auth.dto.KakaoTokenRequestDTO;
 import com.flab.rallymate.auth.dto.KakaoTokenResponseDTO;
 import com.flab.rallymate.auth.dto.KakaoUserResponseDTO;
@@ -23,6 +14,16 @@ import com.flab.rallymate.domain.member.constant.Status;
 import com.flab.rallymate.domain.member.constant.UserRole;
 import com.flab.rallymate.domain.member.domain.Member;
 import com.flab.rallymate.domain.member.dto.MemberJoinRequestDTO;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.mockito.Mockito.*;
 
 class AuthServiceTest {
 	private AuthService authService;
@@ -54,7 +55,6 @@ class AuthServiceTest {
 		kakaoTokenResponseDTO =  new KakaoTokenResponseDTO("sampleAccessToken", "sampleRefreshToken");
 		kakaoUserResponseDTO = new KakaoUserResponseDTO("1", new Properties("nathan"), new KakaoAccount("hj@kakao.com"));
 		savedMember =  new Member(1L, "nathan", "hj@kakao.com", "encryptedPassword", Status.USED, UserRole.ROLE_USER, LocalDateTime.now());
-
 	}
 
 	@Test
@@ -150,5 +150,32 @@ class AuthServiceTest {
 		verify(memberService).join(memberJoinReq);
 		verify(jwtTokenProvider).createAccessToken(savedMember.getEmail(), savedMember.getUserRole());
 		verify(jwtTokenProvider).createRefreshToken(savedMember.getEmail(), savedMember.getUserRole());
+	}
+
+	@Test
+	void reIssue_요청한_refreshToken이_유효한_경우_새로운_refreshToken을_발행한다() throws Exception {
+		String requestRefreshToken = "requestRefreshToken";
+		String newAccessToken = "newAccessToken";
+		String newRefreshToken = "newRefreshToken";
+		long REFRESH_TOKEN_TIMEOUT = 10L;
+		RefreshToken savedRefreshToken = new RefreshToken(savedMember.getEmail(), requestRefreshToken, JwtTokenProvider.ACCESS_TOKEN_TIMEOUT);
+		RefreshToken reIssuedRefreshToken = new RefreshToken(savedMember.getEmail(), newRefreshToken, JwtTokenProvider.REFRESH_TOKEN_TIMEOUT);
+
+		when(jwtTokenProvider.getEmailByToken(requestRefreshToken)).thenReturn(savedMember.getEmail());
+		when(refreshTokenRedisRepository.findById(savedMember.getEmail())).thenReturn(Optional.of(savedRefreshToken));
+		when(memberService.findMemberBy(savedMember.getEmail())).thenReturn(Optional.of(savedMember));
+		when(jwtTokenProvider.isTokenExpired(requestRefreshToken)).thenReturn(false);
+		when(jwtTokenProvider.createAccessToken(savedMember.getEmail(), savedMember.getUserRole())).thenReturn(newAccessToken);
+		when(jwtTokenProvider.createRefreshToken(savedMember.getEmail(), savedMember.getUserRole())).thenReturn(newRefreshToken);
+		when(refreshTokenRedisRepository.save(any())).thenReturn(reIssuedRefreshToken);
+
+
+		authService.reIssue(requestRefreshToken);
+
+
+		verify(refreshTokenRedisRepository).findById(savedMember.getEmail());
+		verify(jwtTokenProvider).createRefreshToken(savedMember.getEmail(), savedMember.getUserRole());
+		assertEquals(reIssuedRefreshToken.getEmail(), savedRefreshToken.getEmail());
+		assertNotEquals(reIssuedRefreshToken.getRefreshToken(), savedRefreshToken.getRefreshToken());
 	}
 }

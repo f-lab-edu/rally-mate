@@ -18,6 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static com.flab.rallymate.error.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -58,6 +60,19 @@ public class AuthService {
         }
 
         return createLoginResponse(findMember.get());
+    }
+
+    public LoginResponseDTO reIssue(String refreshToken) {
+
+        String email = jwtTokenProvider.getEmailByToken(refreshToken);
+        String findRefreshToken = refreshTokenRedisRepository.findById(email)
+                                .orElseThrow(() -> new BaseException(NOT_FOUND_TOKEN)).getRefreshToken();
+
+        if (!findRefreshToken.equals(refreshToken))
+            throw new BaseException(INVALID_TOKEN);
+
+        var findMember = memberService.findMemberBy(email).orElseThrow(() -> new BaseException(NOT_FOUND_MEMBER));
+        return createLoginResponse(findMember);
     }
 
     private LoginResponseDTO createLoginResponse(Member member) {
