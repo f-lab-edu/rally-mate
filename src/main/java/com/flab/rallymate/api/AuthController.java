@@ -44,9 +44,10 @@ public class AuthController {
 		return BaseHttpResponse.success(loginResponseDTO);
 	}
 
-	@PostMapping("/re-issue")
-	public BaseHttpResponse<LoginResponseDTO> reIssue(@RequestHeader("RefreshToken") String refreshToken) {
-		var loginResponseDTO = authService.reIssue(refreshToken);
+	@PostMapping("/refresh")
+	@Operation(summary = "Refresh Token 재발행 API")
+	public BaseHttpResponse<LoginResponseDTO> refresh(@RequestHeader("RefreshToken") String refreshToken) {
+		var loginResponseDTO = authService.refresh(refreshToken);
 		return BaseHttpResponse.success(loginResponseDTO);
 	}
 }

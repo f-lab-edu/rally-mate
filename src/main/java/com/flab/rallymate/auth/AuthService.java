@@ -62,7 +62,7 @@ public class AuthService {
         return createLoginResponse(findMember.get());
     }
 
-    public LoginResponseDTO reIssue(String refreshToken) {
+    public LoginResponseDTO refresh(String refreshToken) {
 
         String email = jwtTokenProvider.getEmailByToken(refreshToken);
         String findRefreshToken = refreshTokenRedisRepository.findById(email)

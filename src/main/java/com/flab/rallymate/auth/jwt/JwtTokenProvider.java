@@ -23,7 +23,6 @@ public class JwtTokenProvider {
 
 	public static final long ACCESS_TOKEN_TIMEOUT = 1000 * 60 * 30L; // 30M
 	public static final long REFRESH_TOKEN_TIMEOUT = 1000 * 60 * 60 * 2L;    // 2H
-	public static final long REFRESH_TOKEN_REISSUE_TIMEOUT = 1000 * 60 * 60 * 24 * 3L;    // 3Day
 
 	public String createAccessToken(String email, UserRole role) {
 		return generateToken(email, role, ACCESS_TOKEN_TIMEOUT);
@@ -79,15 +78,5 @@ public class JwtTokenProvider {
 	private Key getSigningKey() {
 		byte[] keyBytes = secretKey.getBytes(StandardCharsets.UTF_8);
 		return Keys.hmacShaKeyFor(keyBytes);
-	}
-
-	public long getRemainMilliSeconds(String token) {
-		Date expiration = extractClaims(token).getExpiration();
-		Date now = new Date();
-		return expiration.getTime() - now.getTime();
-	}
-
-	public Long getMemberIdByToken(String token) {
-		return extractClaims(token).get("id", Long.class);
 	}
 }

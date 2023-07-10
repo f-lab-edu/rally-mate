@@ -153,7 +153,7 @@ class AuthServiceTest {
 	}
 
 	@Test
-	void reIssue_요청한_refreshToken이_유효한_경우_새로운_refreshToken을_발행한다() throws Exception {
+	void refresh_요청한_refreshToken이_유효한_경우_새로운_refreshToken을_발행한다() throws Exception {
 		String requestRefreshToken = "requestRefreshToken";
 		String newAccessToken = "newAccessToken";
 		String newRefreshToken = "newRefreshToken";
@@ -170,7 +170,7 @@ class AuthServiceTest {
 		when(refreshTokenRedisRepository.save(any())).thenReturn(reIssuedRefreshToken);
 
 
-		authService.reIssue(requestRefreshToken);
+		authService.refresh(requestRefreshToken);
 
 
 		verify(refreshTokenRedisRepository).findById(savedMember.getEmail());
