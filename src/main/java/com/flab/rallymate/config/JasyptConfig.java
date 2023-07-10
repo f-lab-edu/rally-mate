@@ -1,4 +1,4 @@
-package com.flab.rallymate.common.config;
+package com.flab.rallymate.config;
 
 import com.ulisesbocchio.jasyptspringboot.annotation.EnableEncryptableProperties;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;

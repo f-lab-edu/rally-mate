@@ -1,7 +1,30 @@
 version: '3.0'
 
 services:
+  redis-token:
+    image: redis:latest
+    container_name: redis-token
+    command: redis-server --port 6379
+    ports:
+      - "6379:6379"
+
   rally-mate:
     image: phj0860/rally-mate:latest
+    restart: on-failure
+    depends_on:
+      - redis-token
     ports:
-      - "8080:8080"
+      - "9000:9000"
+
+  rallymate-db:
+    image: mysql:8.0.25
+    restart: on-failure
+    container_name: rallymate-mysql
+    command: mysqld --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: "${MYSQL_DATABASE}"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_USER: "${MYSQL_USER}"
+      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"

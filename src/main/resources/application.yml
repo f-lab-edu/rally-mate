@@ -11,22 +11,19 @@ spring:
     include:
       - secret
 
+  jackson:
+    time-zone: Asia/Seoul
+
   datasource:
     url: jdbc:mysql://db-grtk2.pub-cdb.ntruss.com:3306/rallymate_db?serverTimezone=UTC&characterEncoding=UTF-8
     username: ENC(j/UxR+XxfBzdFGnFRz6E1FBLY2b3lReXDdHOowQyKVmNWABoMb7FnMJfmv7Yq0k8)
     password: ENC(wyWWqPbgLOxYGyOZubp+af2fqebd1vDb7uHvabnlHAgBWNP/NzyLesseq9GWxRNw)
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-#  redis:
-#    cache:
-#      host:
-#      port: 6379
-#    token:
-#      host:
-#      port: 6380
-#  cache:
-#    type: redis #redis-cache 사용
-
+  redis:
+    token:
+      host: 127.0.0.1
+      port: 6379
 
 
   jpa:
@@ -56,3 +53,13 @@ decorator:
   datasource:
     p6spy:
       enable-logging: true
+
+oauth2:
+  client:
+    kakao:
+      client-id: ENC(3iVaxf+71Eq8Iq2VclE351wzXwnz+MvVxaCAnLTQYZ4k/WeofW9l6LIxmGndx1iA1p+ALMemTmDcC8mHn1AEqKJnjvItQ7F2R5kABavZOzs=)
+      client-secret: ENC(caqSGl7DBfA+iisiuBYXVDM++j0f02TTnsXyrY/PPTyqL70JKmboffLaOd5g8gPorBzHnK7PZs6yHcmw6B0VlE5vWoS/8BVLIZDBf2fofqs=)
+      callback-url: http://localhost:9000/auth/login
+
+jwt:
+  secret-key: ENC(ZUoGVZDCb3/+f+xZTlBFW5591u90xpzKo1xB3rBlQ8PXiI7dFrvbYn1dxsekH+0eM3xiIPYxdJVelqiYnMPO1Ig5yRBxs5NU3p2qHQk2WU1v0U4799tZrf1giOJzdtVdh7bAE6YUwXe8SOnjGHc6V6FZYwG7Wv+Qqfsla4+fQLjERIR+RsGsMiTiLRCT7efWjNng1m7HL/f5LDPalalJGjiEopfFMBMHa4r0KJBECrc=)
