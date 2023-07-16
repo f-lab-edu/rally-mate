@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @RedisHash("refresh")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RefreshToken {
+public class RefreshTokenEntity {
 
 	@Id
 	private String email;
@@ -25,17 +25,9 @@ public class RefreshToken {
 	private Long expiration;
 
 	@Builder
-	public RefreshToken(String email, String refreshToken, Long expiration) {
+	public RefreshTokenEntity(String email, String refreshToken, Long expiration) {
 		this.email = email;
 		this.refreshToken = refreshToken;
 		this.expiration = expiration;
-	}
-
-	public static RefreshToken of(String email, String refreshToken, Long expiration) {
-		return RefreshToken.builder()
-			.email(email)
-			.refreshToken(refreshToken)
-			.expiration(expiration / 1_000)
-			.build();
 	}
 }
