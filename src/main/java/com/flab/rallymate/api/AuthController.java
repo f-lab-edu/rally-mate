@@ -1,16 +1,24 @@
 package com.flab.rallymate.api;
 
+import java.io.IOException;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.flab.rallymate.auth.AuthService;
 import com.flab.rallymate.auth.dto.LoginResponseDTO;
+import com.flab.rallymate.auth.jwt.dto.JwtTokenDTO;
 import com.flab.rallymate.config.oauth.KakaoOAuthProperties;
 import com.flab.rallymate.error.BaseHttpResponse;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
 
 @Tag(name = "auth", description = "인증 API")
 @RestController
@@ -46,7 +54,7 @@ public class AuthController {
 
 	@PostMapping("/refresh")
 	@Operation(summary = "Refresh Token 재발행 API")
-	public BaseHttpResponse<LoginResponseDTO> refresh(@RequestHeader("RefreshToken") String refreshToken) {
+	public BaseHttpResponse<JwtTokenDTO> refresh(@RequestHeader("RefreshToken") String refreshToken) {
 		var loginResponseDTO = authService.refresh(refreshToken);
 		return BaseHttpResponse.success(loginResponseDTO);
 	}
