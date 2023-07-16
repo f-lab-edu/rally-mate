@@ -5,13 +5,12 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-// 2. config 제거
 @FeignClient(name = "kakaoAuthClient", url = "https://kauth.kakao.com")
 public interface KakaoAuthClient {
 
     @PostMapping(value = "/oauth/token", consumes = "application/x-www-form-urlencoded", produces = "application/json")
     KakaoTokenResponseDTO requestToken(
-            @RequestBody String kakaoTokenRequestDTO
+            @RequestBody String kakaoTokenQueryParam
     );
 
 }

@@ -2,24 +2,19 @@ package com.flab.rallymate.auth.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import lombok.Builder;
 
 public record KakaoUserResponseDTO(
-        String id,
-        Properties properties,
+	String id,
+	Properties properties,
 
-        @JsonProperty("kakao_account")
-        KakaoAccount kakaoAccount
+	@JsonProperty("kakao_account")
+	KakaoAccount kakaoAccount
 ) {
 
-    public record KakaoAccount(
-            String email
-    ) {
-    }
-
-    public record Properties(
-            String nickname
-    ) {
-    }
+	@Builder
+	public KakaoUserResponseDTO {
+	}
 }
 
 
