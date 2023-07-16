@@ -1,5 +1,15 @@
 package com.flab.rallymate.auth;
 
+import static com.flab.rallymate.domain.member.constant.MemberStatus.*;
+import static com.flab.rallymate.error.ErrorCode.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.flab.rallymate.auth.dto.KakaoAccount;
 import com.flab.rallymate.auth.dto.KakaoUserResponseDTO;
 import com.flab.rallymate.auth.dto.Properties;
@@ -10,17 +20,6 @@ import com.flab.rallymate.domain.member.constant.UserRole;
 import com.flab.rallymate.domain.member.domain.MemberEntity;
 import com.flab.rallymate.domain.member.domain.MemberRepository;
 import com.flab.rallymate.error.BaseException;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
-import java.util.Optional;
-
-import static com.flab.rallymate.domain.member.constant.MemberStatus.*;
-import static com.flab.rallymate.error.ErrorCode.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
 
 class AuthServiceTest {
 
@@ -52,10 +51,16 @@ class AuthServiceTest {
                                 .build()
                 )
                 .build();
+		var memberEntity = Optional.of(MemberEntity.builder()
+			.id(2L)
+			.email("sample@sample.com")
+			.userRole(UserRole.ROLE_USER)
+			.build()
+		);
 
         when(kakaoAuthService.authenticate(authCode)).thenReturn(kakaoResponse);
         when(memberRepository.findMemberByEmailAndMemberStatus(kakaoResponse.kakaoAccount().email(), ACTIVATE))
-				.thenReturn(Optional.of(MemberEntity.builder().id(2L).build()));
+				.thenReturn(memberEntity);
 		when(jwtTokenProvider.createToken(kakaoResponse.kakaoAccount().email(), UserRole.ROLE_USER)).thenReturn(sampleTokenDTO);
 
 
