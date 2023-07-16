@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 
 public enum ErrorCode {
 
+	FAILED_KAKAO_AUTH(HttpStatus.UNAUTHORIZED, "카카오 인증에 실패하였습니다"),
 	INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않는 토큰입니다"),
 	NOT_FOUND_TOKEN(HttpStatus.UNAUTHORIZED, "해당하는 토큰을 찾을 수 없습니다"),
 	NOT_FOUND_MEMBER(HttpStatus.UNAUTHORIZED, "해당 유저를 찾을 수 없습니다"),

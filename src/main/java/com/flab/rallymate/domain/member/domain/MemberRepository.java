@@ -5,11 +5,11 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.flab.rallymate.domain.member.constant.Status;
+import com.flab.rallymate.domain.member.constant.MemberStatus;
 
 @Repository
-public interface MemberRepository extends JpaRepository<Member, Long> {
+public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
 
-	Optional<Member> findMemberByEmailAndStatus(String email, Status status);
-	Optional<Member> findByIdAndStatus(Long id, Status status);
+	Optional<MemberEntity> findMemberByEmailAndMemberStatus(String email, MemberStatus status);
+	Optional<MemberEntity> findByIdAndMemberStatus(Long id, MemberStatus status);
 }

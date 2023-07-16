@@ -3,7 +3,7 @@ package com.flab.rallymate.domain.member.domain;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-import com.flab.rallymate.domain.member.constant.Status;
+import com.flab.rallymate.domain.member.constant.MemberStatus;
 import com.flab.rallymate.domain.member.constant.UserRole;
 
 import jakarta.persistence.Column;
@@ -16,14 +16,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
+@EqualsAndHashCode
 @Entity
 @Table(name = "member")
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Member {
+public class MemberEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,9 +41,10 @@ public class Member {
 	private String password;
 
 	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private Status status;
+	@Column(name = "status", nullable = false)
+	private MemberStatus memberStatus;
 
+	@EqualsAndHashCode.Exclude
 	@Column(name = "created_time", nullable = false)
 	private LocalDateTime createdTime;
 
@@ -50,24 +53,26 @@ public class Member {
 	private UserRole userRole;
 
 	@Builder
-	public Member(Long id, String name, String email, String password, Status status, UserRole userRole, LocalDateTime createdTime) {
+	public MemberEntity(Long id, String name, String email, String password, MemberStatus memberStatus, UserRole userRole, LocalDateTime createdTime) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.password = password;
-		this.status = status;
+		this.memberStatus = memberStatus;
 		this.userRole = Objects.isNull(userRole) ? UserRole.ROLE_USER : userRole;
 		this.createdTime = createdTime;
 	}
 
-	public static Member createMember(String name, String email, String password, UserRole userRole) {
-		return Member.builder()
+	public static MemberEntity createMember(String name, String email, String password, UserRole userRole) {
+		return MemberEntity.builder()
 			.name(name)
 			.email(email)
 			.password(password)
-			.status(Status.USED)
+			.memberStatus(MemberStatus.ACTIVATE)
 			.createdTime(LocalDateTime.now())
 			.userRole(userRole)
 			.build();
 	}
+
+
 }

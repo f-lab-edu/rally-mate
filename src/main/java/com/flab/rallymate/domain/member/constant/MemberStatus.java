@@ -3,15 +3,15 @@ package com.flab.rallymate.domain.member.constant;
 import lombok.Getter;
 
 @Getter
-public enum Status {
+public enum MemberStatus {
 
-	USED("사용중"),
-	SUSPEND("사용정지"),
-	DELETED("삭제됨");
+	ACTIVATE("활성화"),
+	BLOCKED("차단"),
+	DORMANT("휴면");
 
 	private final String status;
 
-	Status(String status) {
+	MemberStatus(String status) {
 		this.status = status;
 	}
 }
