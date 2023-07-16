@@ -1,11 +1,12 @@
 package com.flab.rallymate.auth.filter;
 
-import com.flab.rallymate.auth.jwt.JwtAuthenticationFilter;
-import com.flab.rallymate.auth.jwt.JwtTokenProvider;
-import com.flab.rallymate.auth.model.CustomUserDetails;
-import com.flab.rallymate.auth.CustomUserDetailsService;
-import com.flab.rallymate.domain.member.constant.UserRole;
-import jakarta.servlet.ServletException;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockFilterChain;
@@ -15,12 +16,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.stream.Collectors;
+import com.flab.rallymate.auth.CustomUserDetailsService;
+import com.flab.rallymate.auth.jwt.JwtAuthenticationFilter;
+import com.flab.rallymate.auth.jwt.JwtTokenProvider;
+import com.flab.rallymate.auth.jwt.RefreshTokenRedisRepository;
+import com.flab.rallymate.auth.model.CustomUserDetails;
+import com.flab.rallymate.domain.member.constant.UserRole;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import jakarta.servlet.ServletException;
 
 class JwtAuthenticationFilterTest {
 
@@ -30,16 +33,18 @@ class JwtAuthenticationFilterTest {
     private MockHttpServletResponse mockResponse;
     private MockFilterChain mockFilterChain;
     private CustomUserDetailsService customUserDetailsService;
+	private RefreshTokenRedisRepository refreshTokenRedisRepository;
     private JwtTokenProvider jwtTokenProvider;
 
     @BeforeEach
     void setUp() {
         userDetails = new CustomUserDetails("nathan@kakao.com", "encryptedPassword", Collections.singletonList(UserRole.ROLE_ADMIN.name()));
         customUserDetailsService = mock(CustomUserDetailsService.class);
-        jwtTokenProvider = new JwtTokenProvider();
+		refreshTokenRedisRepository = mock(RefreshTokenRedisRepository.class);
+        jwtTokenProvider = new JwtTokenProvider(refreshTokenRedisRepository);
         sut = new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService);
         mockRequest = new MockHttpServletRequest();
-        mockRequest.addHeader("Authorization", getJwtToken(userDetails.getEmail()));
+        mockRequest.addHeader("Authorization", getAccessToken(userDetails.getEmail()));
         mockResponse = new MockHttpServletResponse();
         mockFilterChain = new MockFilterChain();
     }
@@ -71,9 +76,10 @@ class JwtAuthenticationFilterTest {
     }
 
 
-    private String getJwtToken(String email) {
-        JwtTokenProvider tokenProvider = new JwtTokenProvider();
-        return "Bearer " + tokenProvider.createAccessToken(email, UserRole.ROLE_ADMIN);
+    private String getAccessToken(String email) {
+        JwtTokenProvider tokenProvider = new JwtTokenProvider(refreshTokenRedisRepository);
+
+		return "Bearer " + tokenProvider.createToken(email, UserRole.ROLE_ADMIN).accessToken();
     }
 
 }

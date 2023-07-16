@@ -1,24 +1,23 @@
 package com.flab.rallymate.auth.rest;
 
-import com.flab.rallymate.api.AuthController;
-import com.flab.rallymate.auth.AuthService;
-import com.flab.rallymate.auth.dto.LoginResponseDTO;
-import com.flab.rallymate.config.oauth.KakaoOAuthProperties;
-import com.flab.rallymate.error.BaseException;
-import com.flab.rallymate.error.BaseExceptionHandler;
-import feign.FeignException;
+import static com.flab.rallymate.error.ErrorCode.*;
+import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import static com.flab.rallymate.error.ErrorCode.INVALID_TOKEN;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.flab.rallymate.api.AuthController;
+import com.flab.rallymate.auth.AuthService;
+import com.flab.rallymate.auth.dto.LoginResponseDTO;
+import com.flab.rallymate.auth.jwt.dto.JwtTokenDTO;
+import com.flab.rallymate.config.oauth.KakaoOAuthProperties;
+import com.flab.rallymate.error.BaseException;
+import com.flab.rallymate.error.BaseExceptionHandler;
 
 class AuthControllerTest {
 	private MockMvc client;
@@ -52,14 +51,13 @@ class AuthControllerTest {
 	@Test
 	void refresh_유효한_RefreshToken으로_토큰_재발급_요청_시_성공한다() throws Exception {
 		String oldValidRefreshToken = "oldRefreshToken";
-		when(authService.refresh(oldValidRefreshToken)).thenReturn(new LoginResponseDTO(90L, "90AccessToken", "90RefreshToken"));
+		when(authService.refresh(oldValidRefreshToken)).thenReturn(new JwtTokenDTO("90AccessToken", "90RefreshToken"));
 
 
 		client.perform(post("/auth/refresh")
 					.header("RefreshToken", oldValidRefreshToken)
 				)
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.data.id", is(90)))
 				.andExpect(jsonPath("$.data.refreshToken", is("90RefreshToken")))
 				.andExpect(jsonPath("$.data.accessToken", is("90AccessToken")));
 
@@ -69,14 +67,13 @@ class AuthControllerTest {
 	@Test
 	void refresh_유효하지_않는_RefreshToken으로_토큰_재발급_요청_시_401_에러를_반환한다_1번() throws Exception {
 		String oldValidRefreshToken = "oldRefreshToken";
-		when(authService.refresh(oldValidRefreshToken)).thenReturn(new LoginResponseDTO(90L, "90AccessToken", "90RefreshToken"));
+		when(authService.refresh(oldValidRefreshToken)).thenReturn(new JwtTokenDTO( "90AccessToken", "90RefreshToken"));
 
 
 		client.perform(post("/auth/refresh")
 					.header("RefreshToken", oldValidRefreshToken)
 				)
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.data.id", is(90)))
 				.andExpect(jsonPath("$.data.refreshToken", is("90RefreshToken")))
 				.andExpect(jsonPath("$.data.accessToken", is("90AccessToken")));
 
