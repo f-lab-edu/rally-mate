@@ -1,181 +1,202 @@
 package com.flab.rallymate.auth;
 
-import com.flab.rallymate.auth.dto.KakaoTokenRequestDTO;
-import com.flab.rallymate.auth.dto.KakaoTokenResponseDTO;
+import com.flab.rallymate.auth.dto.KakaoAccount;
 import com.flab.rallymate.auth.dto.KakaoUserResponseDTO;
-import com.flab.rallymate.auth.dto.KakaoUserResponseDTO.KakaoAccount;
-import com.flab.rallymate.auth.dto.KakaoUserResponseDTO.Properties;
+import com.flab.rallymate.auth.dto.Properties;
 import com.flab.rallymate.auth.jwt.JwtTokenProvider;
-import com.flab.rallymate.auth.jwt.RefreshTokenRedisRepository;
-import com.flab.rallymate.auth.jwt.dto.RefreshToken;
-import com.flab.rallymate.config.oauth.KakaoOAuthProperties;
-import com.flab.rallymate.domain.member.MemberService;
-import com.flab.rallymate.domain.member.constant.Status;
+import com.flab.rallymate.auth.jwt.dto.JwtTokenDTO;
+import com.flab.rallymate.auth.jwt.dto.RefreshTokenEntity;
 import com.flab.rallymate.domain.member.constant.UserRole;
-import com.flab.rallymate.domain.member.domain.Member;
-import com.flab.rallymate.domain.member.dto.MemberJoinRequestDTO;
+import com.flab.rallymate.domain.member.domain.MemberEntity;
+import com.flab.rallymate.domain.member.domain.MemberRepository;
+import com.flab.rallymate.error.BaseException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
+import static com.flab.rallymate.domain.member.constant.MemberStatus.*;
+import static com.flab.rallymate.error.ErrorCode.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class AuthServiceTest {
-	private AuthService authService;
-	private KakaoAuthClient kakaoAuthClient;
-	private KakaoInfoClient kakaoInfoClient;
 
-	private KakaoOAuthProperties kakaoOAuthProperties;
-	private MemberService memberService;
-	private JwtTokenProvider jwtTokenProvider;
-	private PasswordEncoder passwordEncoder;
-	private RefreshTokenRedisRepository refreshTokenRedisRepository;
+    private AuthService sut;
+    private KakaoAuthService kakaoAuthService;
+    private MemberRepository memberRepository;
+    private JwtTokenProvider jwtTokenProvider;
 
-	private KakaoTokenResponseDTO kakaoTokenResponseDTO;
-	private KakaoUserResponseDTO kakaoUserResponseDTO;
-	private Member savedMember;
+    @BeforeEach
+    void setUp() {
+        kakaoAuthService = mock(KakaoAuthService.class);
+        memberRepository = mock(MemberRepository.class);
+        jwtTokenProvider = mock(JwtTokenProvider.class);
+        sut = new AuthService(
+                kakaoAuthService,
+                jwtTokenProvider,
+                memberRepository
+        );
+    }
 
-	@BeforeEach
-	void setUp() {
-		kakaoAuthClient = mock(KakaoAuthClient.class);
-		kakaoInfoClient = mock(KakaoInfoClient.class);
-		kakaoOAuthProperties = mock(KakaoOAuthProperties.class);
-		memberService = mock(MemberService.class);
-		jwtTokenProvider = mock(JwtTokenProvider.class);
-		passwordEncoder = mock(PasswordEncoder.class);
-		refreshTokenRedisRepository = mock(RefreshTokenRedisRepository.class);
-		authService = new AuthService(kakaoAuthClient, kakaoInfoClient, kakaoOAuthProperties, memberService,
-			passwordEncoder, jwtTokenProvider, refreshTokenRedisRepository);
+    @Test
+    void kakaoLogin_카카오로그인_성공_시에_JWT토큰을_발급한다() {
+        String authCode = "sampleAuthCode";
+		var sampleTokenDTO = new JwtTokenDTO("sampleAccessToken", "sampleRefreshToken");
+        var kakaoResponse = KakaoUserResponseDTO.builder()
+                .kakaoAccount(
+                        KakaoAccount.builder()
+                                .email("sample@sample.com")
+                                .build()
+                )
+                .build();
 
-		kakaoTokenResponseDTO =  new KakaoTokenResponseDTO("sampleAccessToken", "sampleRefreshToken");
-		kakaoUserResponseDTO = new KakaoUserResponseDTO("1", new Properties("nathan"), new KakaoAccount("hj@kakao.com"));
-		savedMember =  new Member(1L, "nathan", "hj@kakao.com", "encryptedPassword", Status.USED, UserRole.ROLE_USER, LocalDateTime.now());
-	}
-
-	@Test
-	void kakaoLogin_넘어온_authCode로_카카오API를_호출한다() throws Exception {
-		String sampleAuthCode = "sampleAuthCode";
-		RefreshToken refreshToken = new RefreshToken("hj@kakao.com", "sampleRefreshToken", 10L);
-		when(kakaoAuthClient.requestToken(
-			KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, sampleAuthCode).toString()))
-			.thenReturn(kakaoTokenResponseDTO);
-		when(kakaoInfoClient.getUserInfo("Bearer " + kakaoTokenResponseDTO.accessToken()))
-			.thenReturn(kakaoUserResponseDTO);
-		when(memberService.findMemberBy(kakaoUserResponseDTO.kakaoAccount().email())).thenReturn(Optional.ofNullable(savedMember));
-		when(refreshTokenRedisRepository.save(any(RefreshToken.class))).thenReturn(refreshToken);
+        when(kakaoAuthService.authenticate(authCode)).thenReturn(kakaoResponse);
+        when(memberRepository.findMemberByEmailAndMemberStatus(kakaoResponse.kakaoAccount().email(), ACTIVATE))
+				.thenReturn(Optional.of(MemberEntity.builder().id(2L).build()));
+		when(jwtTokenProvider.createToken(kakaoResponse.kakaoAccount().email(), UserRole.ROLE_USER)).thenReturn(sampleTokenDTO);
 
 
-		authService.kakaoLogin(sampleAuthCode);
+        var loginResult = sut.kakaoLogin(authCode);
 
 
-		verify(kakaoAuthClient).requestToken(
-			KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, sampleAuthCode).toString());
-	}
+        assertEquals(2L, loginResult.memberId());
+        assertEquals("sampleAccessToken", loginResult.accessToken());
+        assertEquals("sampleRefreshToken", loginResult.refreshToken());
+    }
 
-	@Test
-	void kakaoLogin_받아온_accessToken으로_Kakao_사용자정보를_조회한다() throws Exception {
-		String sampleAuthCode = "sampleAuthCode";
-		RefreshToken refreshToken = new RefreshToken("hj@kakao.com", "sampleRefreshToken", 10L);
-		when(kakaoAuthClient.requestToken(
-			KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, sampleAuthCode).toString()))
-			.thenReturn(kakaoTokenResponseDTO);
-		when(kakaoInfoClient.getUserInfo("Bearer " + kakaoTokenResponseDTO.accessToken()))
-			.thenReturn(kakaoUserResponseDTO);
-		when(memberService.findMemberBy(kakaoUserResponseDTO.kakaoAccount().email())).thenReturn(Optional.of(savedMember));
-		when(refreshTokenRedisRepository.save(any(RefreshToken.class))).thenReturn(refreshToken);
+    @Test
+    void kakaoLogin_카카오인증_정보가_없을_시_FAILD_KAKAO_AUTH_예외가_발생한다() {
+
+        String authCode = "sampleAuthCode";
+        when(kakaoAuthService.authenticate(authCode)).thenReturn(null);
 
 
-		authService.kakaoLogin(sampleAuthCode);
+        BaseException baseException = assertThrows(BaseException.class, () -> sut.kakaoLogin(authCode));
+        assertEquals(baseException.getMessage(), FAILED_KAKAO_AUTH.getMessage());
+    }
+
+    @Test
+    void kakaoLogin_카카오_인증정보에_해당하는_멤버가_없을시에_회원가입_후_JWT토큰을_발행한다() {
+        String authCode = "sampleAuthCode";
+		String samplePassword = "samplePassword";
+		var sampleTokenDTO = new JwtTokenDTO("sampleAccessToken", "sampleRefreshToken");
+        var kakaoResponse = KakaoUserResponseDTO.builder()
+                .kakaoAccount(
+                        KakaoAccount.builder()
+                                .email("sample@sample.com")
+                                .build()
+                )
+                .properties(
+                        Properties.builder()
+                                .nickname("sampleUser")
+                                .build()
+                )
+                .build();
+
+        var createMember = MemberEntity.createMember(
+                        kakaoResponse.properties().nickname(),
+                        kakaoResponse.kakaoAccount().email(),
+                        "samplePassword",
+                        UserRole.ROLE_USER
+        );
+        var savedMember = MemberEntity.builder()
+                .name(kakaoResponse.properties().nickname())
+                .email(kakaoResponse.kakaoAccount().email())
+                .password("samplePassword")
+                .userRole(UserRole.ROLE_USER)
+                .build();
+
+        when(kakaoAuthService.authenticate(authCode)).thenReturn(kakaoResponse);
+        when(memberRepository.findMemberByEmailAndMemberStatus(kakaoResponse.kakaoAccount().email(), ACTIVATE)).thenReturn(Optional.empty());
+		when(kakaoAuthService.getEncryptedPassword(kakaoResponse.id())).thenReturn(samplePassword);
+        when(memberRepository.save(createMember)).thenReturn(savedMember);
+		when(jwtTokenProvider.createToken(kakaoResponse.kakaoAccount().email(), UserRole.ROLE_USER)).thenReturn(sampleTokenDTO);
 
 
-		verify(kakaoInfoClient).getUserInfo("Bearer " + kakaoTokenResponseDTO.accessToken());
-	}
-
-	@Test
-	void kakaoLogin_기존회원인_경우에는_JWT를_발행한다() throws Exception {
-		String sampleAuthCode = "sampleAuthCode";
-		String jwtAccessToken = "jwtAccessToken";
-		RefreshToken refreshToken = new RefreshToken("hj@kakao.com", "sampleRefreshToken", 10L);
-		Member findMember = Member.createMember("네이선", "hj@kakao.com", "password", UserRole.ROLE_USER);
-
-		when(kakaoAuthClient.requestToken(
-			KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, sampleAuthCode).toString()))
-			.thenReturn(kakaoTokenResponseDTO);
-		when(kakaoInfoClient.getUserInfo("Bearer " + kakaoTokenResponseDTO.accessToken()))
-			.thenReturn(kakaoUserResponseDTO);
-		when(memberService.findMemberBy(kakaoUserResponseDTO.kakaoAccount().email())).thenReturn(Optional.of(findMember));
-		when(jwtTokenProvider.createAccessToken(findMember.getEmail(), findMember.getUserRole())).thenReturn(jwtAccessToken);
-		when(refreshTokenRedisRepository.save(any(RefreshToken.class))).thenReturn(refreshToken);
+        var loginResponseDTO = sut.kakaoLogin(authCode);
 
 
-		authService.kakaoLogin(sampleAuthCode);
-
-
-		verify(memberService).findMemberBy(kakaoUserResponseDTO.kakaoAccount().email());
-		verify(jwtTokenProvider).createAccessToken(findMember.getEmail(), findMember.getUserRole());
-		verify(jwtTokenProvider).createRefreshToken(findMember.getEmail(), findMember.getUserRole());
-	}
-
-	@Test
-	void kakaoLogin_기존회원이_아닌_경우에는_회원가입_후_JWT를_발행한다() throws Exception {
-		String sampleAuthCode = "sampleAuthCode";
-		String jwtAccessToken = "jwtAccessToken";
-		RefreshToken refreshToken = new RefreshToken("hj@kakao.com", "sampleRefreshToken", 10L);
-		MemberJoinRequestDTO memberJoinReq = MemberJoinRequestDTO.of(
-				kakaoUserResponseDTO.properties().nickname(),
-				kakaoUserResponseDTO.kakaoAccount().email(),
-			"encryptedPassword"
-		);
-		when(kakaoAuthClient.requestToken(
-			KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, sampleAuthCode).toString()))
-			.thenReturn(kakaoTokenResponseDTO);
-		when(kakaoInfoClient.getUserInfo("Bearer " + kakaoTokenResponseDTO.accessToken()))
-			.thenReturn(kakaoUserResponseDTO);
-		when(memberService.findMemberBy(kakaoUserResponseDTO.kakaoAccount().email())).thenReturn(Optional.empty());
-		when(memberService.join(memberJoinReq)).thenReturn(savedMember);
-		when(jwtTokenProvider.createAccessToken(savedMember.getEmail(), savedMember.getUserRole())).thenReturn(jwtAccessToken);
-		when(passwordEncoder.encode(anyString())).thenReturn("encryptedPassword");
-		when(refreshTokenRedisRepository.save(any(RefreshToken.class))).thenReturn(refreshToken);
-
-
-		authService.kakaoLogin(sampleAuthCode);
-
-
-		verify(memberService).findMemberBy(kakaoUserResponseDTO.kakaoAccount().email());
-		verify(memberService).join(memberJoinReq);
-		verify(jwtTokenProvider).createAccessToken(savedMember.getEmail(), savedMember.getUserRole());
-		verify(jwtTokenProvider).createRefreshToken(savedMember.getEmail(), savedMember.getUserRole());
-	}
+        verify(memberRepository, times(1)).save(createMember);
+        assertEquals("sampleAccessToken", loginResponseDTO.accessToken());
+        assertEquals("sampleRefreshToken", loginResponseDTO.refreshToken());
+    }
 
 	@Test
-	void refresh_요청한_refreshToken이_유효한_경우_새로운_refreshToken을_발행한다() throws Exception {
-		String requestRefreshToken = "requestRefreshToken";
-		String newAccessToken = "newAccessToken";
-		String newRefreshToken = "newRefreshToken";
-		long REFRESH_TOKEN_TIMEOUT = 10L;
-		RefreshToken savedRefreshToken = new RefreshToken(savedMember.getEmail(), requestRefreshToken, JwtTokenProvider.ACCESS_TOKEN_TIMEOUT);
-		RefreshToken reIssuedRefreshToken = new RefreshToken(savedMember.getEmail(), newRefreshToken, JwtTokenProvider.REFRESH_TOKEN_TIMEOUT);
+	void refresh_존재하는_refreshToken_인증요청_시_토큰재발행에_성공한다() {
+		String requestRefreshToken = "sampleRefreshToken";
+		String email = "sample@sample.com";
+		var refreshTokenEntity = RefreshTokenEntity.builder().build();
+		var memberEntity = MemberEntity.builder().email("sample@sample.com").build();
+		var jwtTokenDTO = JwtTokenDTO.builder()
+			.accessToken("sampleAccessToken")
+			.refreshToken("sampleRefreshToken")
+			.build();
 
-		when(jwtTokenProvider.getEmailByToken(requestRefreshToken)).thenReturn(savedMember.getEmail());
-		when(refreshTokenRedisRepository.findById(savedMember.getEmail())).thenReturn(Optional.of(savedRefreshToken));
-		when(memberService.findMemberBy(savedMember.getEmail())).thenReturn(Optional.of(savedMember));
 		when(jwtTokenProvider.isTokenExpired(requestRefreshToken)).thenReturn(false);
-		when(jwtTokenProvider.createAccessToken(savedMember.getEmail(), savedMember.getUserRole())).thenReturn(newAccessToken);
-		when(jwtTokenProvider.createRefreshToken(savedMember.getEmail(), savedMember.getUserRole())).thenReturn(newRefreshToken);
-		when(refreshTokenRedisRepository.save(any())).thenReturn(reIssuedRefreshToken);
+		when(jwtTokenProvider.getEmailByToken(requestRefreshToken)).thenReturn(email);
+		when(jwtTokenProvider.findRefreshTokenBy(email)).thenReturn(Optional.of(refreshTokenEntity));
+		when(memberRepository.findMemberByEmailAndMemberStatus(email, ACTIVATE)).thenReturn(Optional.of(memberEntity));
+		when(jwtTokenProvider.createToken(memberEntity.getEmail(), memberEntity.getUserRole())).thenReturn(jwtTokenDTO);
 
 
-		authService.refresh(requestRefreshToken);
+		var result = sut.refresh(requestRefreshToken);
 
 
-		verify(refreshTokenRedisRepository).findById(savedMember.getEmail());
-		verify(jwtTokenProvider).createRefreshToken(savedMember.getEmail(), savedMember.getUserRole());
-		assertEquals(reIssuedRefreshToken.getEmail(), savedRefreshToken.getEmail());
-		assertNotEquals(reIssuedRefreshToken.getRefreshToken(), savedRefreshToken.getRefreshToken());
+		assertEquals("sampleAccessToken", result.accessToken());
+		assertEquals("sampleRefreshToken", result.refreshToken());
 	}
+
+
+	@Test
+	void refresh_기간이_지나서_유효하지_않는_refreshToken으로_토큰재발행_시에_INVALID_TOKEN_예외가_발생한다() {
+		String requestRefreshToken = "sampleRefreshToken";
+		String email = "sample@sample.com";
+		var refreshTokenEntity = RefreshTokenEntity.builder().build();
+		var memberEntity = MemberEntity.builder().email("sample@sample.com").build();
+
+		when(jwtTokenProvider.isTokenExpired(requestRefreshToken)).thenReturn(true);
+		when(jwtTokenProvider.getEmailByToken(requestRefreshToken)).thenReturn(email);
+		when(jwtTokenProvider.findRefreshTokenBy(email)).thenReturn(Optional.of(refreshTokenEntity));
+		when(memberRepository.findMemberByEmailAndMemberStatus(email, ACTIVATE)).thenReturn(Optional.of(memberEntity));
+
+
+		BaseException baseException = assertThrows(BaseException.class, () -> sut.refresh(requestRefreshToken));
+		assertEquals(baseException.getMessage(), INVALID_TOKEN.getMessage());
+	}
+
+	@Test
+	void refresh_존재하지_않는_refreshToken으로_토큰재발행_요청_시에_NOT_FOUND_TOKEN_예외가_발생한다() {
+		String requestRefreshToken = "sampleRefreshToken";
+		String email = "sample@sample.com";
+		var memberEntity = MemberEntity.builder().email("sample@sample.com").build();
+		when(jwtTokenProvider.getEmailByToken(requestRefreshToken)).thenReturn(email);
+		when(jwtTokenProvider.findRefreshTokenBy(email)).thenReturn(Optional.empty());
+		when(memberRepository.findMemberByEmailAndMemberStatus(email, ACTIVATE)).thenReturn(Optional.of(memberEntity));
+
+
+		BaseException baseException = assertThrows(BaseException.class, () -> sut.refresh(requestRefreshToken));
+		assertEquals(baseException.getMessage(), NOT_FOUND_TOKEN.getMessage());
+	}
+
+
+
+	@Test
+	void refresh_요청한_refreshToken_해당하는_유저정보가_없을시_NOT_FOUND_MEMBER_예외가_발생한다() {
+		String requestRefreshToken = "sampleRefreshToken";
+		String email = "sample@sample.com";
+		var refreshTokenEntity = RefreshTokenEntity.builder().build();
+		when(jwtTokenProvider.getEmailByToken(requestRefreshToken)).thenReturn(email);
+		when(jwtTokenProvider.findRefreshTokenBy(email)).thenReturn(Optional.of(refreshTokenEntity));
+		when(memberRepository.findMemberByEmailAndMemberStatus(email, ACTIVATE)).thenReturn(Optional.empty());
+
+
+		BaseException baseException = assertThrows(BaseException.class, () -> sut.refresh(requestRefreshToken));
+		assertEquals(baseException.getMessage(), NOT_FOUND_MEMBER.getMessage());
+	}
+
+
+
 }
