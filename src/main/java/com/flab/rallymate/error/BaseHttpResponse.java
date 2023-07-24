@@ -17,8 +17,12 @@ public class BaseHttpResponse<T> {
         return new BaseHttpResponse<>(data, null);
     }
 
-    public static BaseHttpResponse<?> successWithNoContent() {
+    public static <T> BaseHttpResponse<T> successWithNoContent() {
         return new BaseHttpResponse<>(null, null);
+    }
+
+    public static <T> BaseHttpResponse<T> successWithNoContent(String message) {
+        return new BaseHttpResponse<>(null, message);
     }
 
     public static BaseHttpResponse<?> error(String message) {

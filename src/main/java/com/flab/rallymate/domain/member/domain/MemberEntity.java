@@ -6,6 +6,7 @@ import java.util.Objects;
 import com.flab.rallymate.domain.member.constant.MemberStatus;
 import com.flab.rallymate.domain.member.constant.UserRole;
 
+import com.flab.rallymate.global.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -21,11 +22,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = false)
 @Entity
 @Table(name = "member")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MemberEntity {
+public class MemberEntity extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,23 +45,19 @@ public class MemberEntity {
 	@Column(name = "status", nullable = false)
 	private MemberStatus memberStatus;
 
-	@EqualsAndHashCode.Exclude
-	@Column(name = "created_time", nullable = false)
-	private LocalDateTime createdTime;
-
 	@Enumerated(EnumType.STRING)
 	@Column(name = "user_role")
 	private UserRole userRole;
 
 	@Builder
-	public MemberEntity(Long id, String name, String email, String password, MemberStatus memberStatus, UserRole userRole, LocalDateTime createdTime) {
+	public MemberEntity(Long id, String name, String email, String password, MemberStatus memberStatus, UserRole userRole) {
 		this.id = id;
 		this.name = name;
 		this.email = email;
 		this.password = password;
 		this.memberStatus = memberStatus;
 		this.userRole = Objects.isNull(userRole) ? UserRole.ROLE_USER : userRole;
-		this.createdTime = createdTime;
+		setCreatedTime(LocalDateTime.now());
 	}
 
 	public static MemberEntity createMember(String name, String email, String password, UserRole userRole) {
@@ -69,7 +66,6 @@ public class MemberEntity {
 			.email(email)
 			.password(password)
 			.memberStatus(MemberStatus.ACTIVATE)
-			.createdTime(LocalDateTime.now())
 			.userRole(userRole)
 			.build();
 	}
