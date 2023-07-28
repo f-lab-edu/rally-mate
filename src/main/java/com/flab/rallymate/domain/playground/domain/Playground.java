@@ -35,7 +35,8 @@ public class Playground extends BaseEntity {
     }
 
     @Builder
-    public Playground(String name, Address address, MemberEntity member) {
+    public Playground(Long id, String name, Address address, MemberEntity member) {
+        this.id = id;
         this.name = name;
         this.address = address;
         this.member = member;

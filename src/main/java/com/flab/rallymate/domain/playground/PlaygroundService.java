@@ -6,10 +6,11 @@ import com.flab.rallymate.domain.playground.domain.Playground;
 import com.flab.rallymate.domain.playground.domain.PlaygroundRepository;
 import com.flab.rallymate.domain.playground.dto.PlaygroundRequestDTO;
 import com.flab.rallymate.error.BaseException;
-import com.flab.rallymate.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 import static com.flab.rallymate.error.ErrorCode.*;
 
@@ -30,6 +31,12 @@ public class PlaygroundService {
         playground.changeMember(findMember);
 
         playgroundRepository.save(playground);
+    }
+
+
+    @Transactional(readOnly = true)
+    public Optional<Playground> findPlaygroundBy(Long id) {
+        return playgroundRepository.findById(id);
     }
 
 }
