@@ -25,7 +25,7 @@ public class BaseHttpResponse<T> {
         return new BaseHttpResponse<>(null, message);
     }
 
-    public static BaseHttpResponse<?> error(String message) {
+    public static <T> BaseHttpResponse<T> error(String message) {
            return new BaseHttpResponse<>(null, message);
    }
 
