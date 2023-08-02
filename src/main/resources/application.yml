@@ -15,7 +15,7 @@ spring:
     time-zone: Asia/Seoul
 
   datasource:
-    url: jdbc:mysql://db-grtk2.pub-cdb.ntruss.com:3306/rallymate_db?serverTimezone=UTC&characterEncoding=UTF-8
+    url: ENC(UWI9x3H7DuwdtwLVxu0GrPMW7rh61RqUdUZizX/0LSxZ7pp+MCnVnwaF6LQmh3XXc4PTq23wJiWuh8b4attYVCMYplq+kiR+27fzvHbS4lAHDpPx9uGTC2+mRefLfYf622RMyULkn6ekrzVqHhPpB3DPM+H1OE/63HDyAZwwWkw=)
     username: ENC(j/UxR+XxfBzdFGnFRz6E1FBLY2b3lReXDdHOowQyKVmNWABoMb7FnMJfmv7Yq0k8)
     password: ENC(wyWWqPbgLOxYGyOZubp+af2fqebd1vDb7uHvabnlHAgBWNP/NzyLesseq9GWxRNw)
     driver-class-name: com.mysql.cj.jdbc.Driver
