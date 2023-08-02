@@ -32,11 +32,18 @@ services:
       - mysql_root_password
       - mysql_user
       - mysql_password
+    volumes:
+      - type: volume
+        source: mysql_data
+        target: /var/lib/mysql
 
 secrets:
-    mysql_root_password:
-        file: /run/secrets/mysql_root_password.txt
-    mysql_user:
-        file: /run/secrets/mysql_user.txt
-    mysql_password:
-        file: /run/secrets/mysql_password.txt
+  mysql_root_password:
+    file: /run/secrets/mysql_root_password.txt
+  mysql_user:
+    file: /run/secrets/mysql_user.txt
+  mysql_password:
+    file: /run/secrets/mysql_password.txt
+
+volumes:
+  mysql_data:
