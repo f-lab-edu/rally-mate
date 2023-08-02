@@ -30,8 +30,6 @@ jib {
 	}
 	container {
 		creationTime = "USE_CURRENT_TIMESTAMP"
-		// jvmFlags = ["-Xms128m", "-Xmx128m"]
-		// jvmFlags = ["-Dspring.profiles.active=prod" ]
 	}
 }
 
@@ -39,10 +37,11 @@ dependencies {
 
 	// base
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	compileOnly 'org.projectlombok:lombok'
 
-	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	implementation 'org.springframework.boot:spring-boot-configuration-processor'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// DB / ORM
@@ -78,10 +77,17 @@ dependencies {
 	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
 	implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.70'
 
-
-	// https://mvnrepository.com/artifact/com.github.gavlyukovskiy/p6spy-spring-boot-starter
+	// p6spy
 	implementation group: 'com.github.gavlyukovskiy', name: 'p6spy-spring-boot-starter', version: '1.9.0'
 
+	// spring security
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '3.1.0'
+
+	// spring cloud openfeign
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.0.3'
+
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
 }
 
