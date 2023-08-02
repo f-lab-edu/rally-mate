@@ -24,7 +24,19 @@ services:
     ports:
       - "3306:3306"
     environment:
-      MYSQL_DATABASE: "${MYSQL_DATABASE}"
-      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
-      MYSQL_USER: "${MYSQL_USER}"
-      MYSQL_PASSWORD: "${MYSQL_PASSWORD}"
+      MYSQL_DATABASE: rallymate_db
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password    # secrets 파일 사용 시에는 prefix로 _FILE 필수
+      MYSQL_USER_FILE: /run/secrets/mysql_user
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_password
+    secrets:
+      - mysql_root_password
+      - mysql_user
+      - mysql_password
+
+secrets:
+    mysql_root_password:
+        file: /run/secrets/mysql_root_password.txt
+    mysql_user:
+        file: /run/secrets/mysql_user.txt
+    mysql_password:
+        file: /run/secrets/mysql_password.txt
