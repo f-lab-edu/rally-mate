@@ -20,8 +20,10 @@ public class PostEntity extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "play_time", nullable = false)
     private int playTime;
 
+    @Column(name = "start_time", nullable = false)
     private LocalDateTime startTime;
 
     @JoinColumn(name = "member_id")
