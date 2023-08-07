@@ -105,12 +105,14 @@ class AuthServiceTest {
                         kakaoResponse.properties().nickname(),
                         kakaoResponse.kakaoAccount().email(),
                         "samplePassword",
+						0,
                         UserRole.ROLE_USER
         );
         var savedMember = MemberEntity.builder()
                 .name(kakaoResponse.properties().nickname())
                 .email(kakaoResponse.kakaoAccount().email())
                 .password("samplePassword")
+				.career(createMember.getCareer())
                 .userRole(UserRole.ROLE_USER)
                 .build();
 

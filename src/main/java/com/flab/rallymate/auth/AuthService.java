@@ -36,6 +36,7 @@ public class AuthService {
                                             kakaoResponse.properties().nickname(),
                                             kakaoResponse.kakaoAccount().email(),
 											kakaoAuthService.getEncryptedPassword(kakaoResponse.id()),
+                                            0,
                                             UserRole.ROLE_USER
             );
             var savedMember = memberRepository.save(createMember);
