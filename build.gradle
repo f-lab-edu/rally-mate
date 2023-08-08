@@ -27,6 +27,7 @@ jib {
 	to {
 		image = "phj0860/rally-mate"
 		tags = ["latest"]
+		entrypoint = ["java", "-Dspring.profiles.active=test", "-jar", "app.jar"]
 	}
 	container {
 		creationTime = "USE_CURRENT_TIMESTAMP"

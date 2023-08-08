@@ -1,0 +1,11 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+oauth2:
+  client:
+    kakao:
+      client-id: ENC(3iVaxf+71Eq8Iq2VclE351wzXwnz+MvVxaCAnLTQYZ4k/WeofW9l6LIxmGndx1iA1p+ALMemTmDcC8mHn1AEqKJnjvItQ7F2R5kABavZOzs=)
+      client-secret: ENC(caqSGl7DBfA+iisiuBYXVDM++j0f02TTnsXyrY/PPTyqL70JKmboffLaOd5g8gPorBzHnK7PZs6yHcmw6B0VlE5vWoS/8BVLIZDBf2fofqs=)
+      callback-url: ENC(JUdyjTqg0qMcTHmUUoksxxlzN1QSi8D76IKN43CBx2u7JyU+Ezar4MtoPW5gm82rei9RiMajJgWuP9rU2cpDDFp/ZAvyplwBgN8vJtSziSo=)
