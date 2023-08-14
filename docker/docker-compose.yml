@@ -10,6 +10,8 @@ services:
 
   rally-mate:
     image: phj0860/rally-mate:latest
+    environment:
+      - "SPRING_PROFILES_ACTIVE=prod"
     restart: on-failure
     depends_on:
       - redis-token
