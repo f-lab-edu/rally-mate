@@ -30,7 +30,6 @@ jib {
 	}
 	container {
 		creationTime = "USE_CURRENT_TIMESTAMP"
-		entrypoint = ["java", "-Dspring.profiles.active=prod", "-jar", "rallymate-0.0.1-SNAPSHOT.jar"]
 	}
 }
 
