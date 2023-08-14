@@ -47,8 +47,8 @@ public class AuthController {
 
 	@GetMapping("/login")
 	@Operation(summary = "카카오 로그인 API")
-	public BaseHttpResponse<LoginResponseDTO> login(@RequestParam String code) {
-		var loginResponseDTO = authService.kakaoLogin(code);
+	public BaseHttpResponse<LoginResponseDTO> login(@RequestParam String kakaoAccessToken) {
+		var loginResponseDTO = authService.kakaoLogin(kakaoAccessToken);
 		return BaseHttpResponse.success(loginResponseDTO);
 	}
 

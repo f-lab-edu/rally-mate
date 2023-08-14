@@ -42,7 +42,7 @@ class AuthServiceTest {
 
     @Test
     void kakaoLogin_카카오로그인_성공_시에_JWT토큰을_발급한다() {
-        String authCode = "sampleAuthCode";
+        String kakaoAccessToken = "sampleKakaoAccessToken";
 		var sampleTokenDTO = new JwtTokenDTO("sampleAccessToken", "sampleRefreshToken");
         var kakaoResponse = KakaoUserResponseDTO.builder()
                 .kakaoAccount(
@@ -58,13 +58,13 @@ class AuthServiceTest {
 			.build()
 		);
 
-        when(kakaoAuthService.authenticate(authCode)).thenReturn(kakaoResponse);
+        when(kakaoAuthService.authenticate(kakaoAccessToken)).thenReturn(kakaoResponse);
         when(memberRepository.findMemberByEmailAndMemberStatus(kakaoResponse.kakaoAccount().email(), ACTIVATE))
 				.thenReturn(memberEntity);
 		when(jwtTokenProvider.createToken(kakaoResponse.kakaoAccount().email(), UserRole.ROLE_USER)).thenReturn(sampleTokenDTO);
 
 
-        var loginResult = sut.kakaoLogin(authCode);
+        var loginResult = sut.kakaoLogin(kakaoAccessToken);
 
 
         assertEquals(2L, loginResult.memberId());
@@ -75,17 +75,17 @@ class AuthServiceTest {
     @Test
     void kakaoLogin_카카오인증_정보가_없을_시_FAILD_KAKAO_AUTH_예외가_발생한다() {
 
-        String authCode = "sampleAuthCode";
-        when(kakaoAuthService.authenticate(authCode)).thenReturn(null);
+		String kakaoAccessToken = "sampleKakaoAccessToken";
+        when(kakaoAuthService.authenticate(kakaoAccessToken)).thenReturn(null);
 
 
-        BaseException baseException = assertThrows(BaseException.class, () -> sut.kakaoLogin(authCode));
+        BaseException baseException = assertThrows(BaseException.class, () -> sut.kakaoLogin(kakaoAccessToken));
         assertEquals(baseException.getMessage(), FAILED_KAKAO_AUTH.getMessage());
     }
 
     @Test
     void kakaoLogin_카카오_인증정보에_해당하는_멤버가_없을시에_회원가입_후_JWT토큰을_발행한다() {
-        String authCode = "sampleAuthCode";
+		String kakaoAccessToken = "sampleKakaoAccessToken";
 		String samplePassword = "samplePassword";
 		var sampleTokenDTO = new JwtTokenDTO("sampleAccessToken", "sampleRefreshToken");
         var kakaoResponse = KakaoUserResponseDTO.builder()
@@ -114,14 +114,14 @@ class AuthServiceTest {
                 .userRole(UserRole.ROLE_USER)
                 .build();
 
-        when(kakaoAuthService.authenticate(authCode)).thenReturn(kakaoResponse);
+        when(kakaoAuthService.authenticate(kakaoAccessToken)).thenReturn(kakaoResponse);
         when(memberRepository.findMemberByEmailAndMemberStatus(kakaoResponse.kakaoAccount().email(), ACTIVATE)).thenReturn(Optional.empty());
 		when(kakaoAuthService.getEncryptedPassword(kakaoResponse.id())).thenReturn(samplePassword);
         when(memberRepository.save(createMember)).thenReturn(savedMember);
 		when(jwtTokenProvider.createToken(kakaoResponse.kakaoAccount().email(), UserRole.ROLE_USER)).thenReturn(sampleTokenDTO);
 
 
-        var loginResponseDTO = sut.kakaoLogin(authCode);
+        var loginResponseDTO = sut.kakaoLogin(kakaoAccessToken);
 
 
         verify(memberRepository, times(1)).save(createMember);
