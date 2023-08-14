@@ -18,11 +18,8 @@ public class KakaoAuthService {
     private final KakaoOAuthProperties kakaoOAuthProperties;
 	private final PasswordEncoder passwordEncoder;
 
-    public KakaoUserResponseDTO authenticate(String authCode) {
-		var kakaoTokenResponseDTO = kakaoAuthClient.requestToken(
-			KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, authCode).toString()
-		);
-		var kakaoUserInfo = kakaoInfoClient.getUserInfo("Bearer " + kakaoTokenResponseDTO.accessToken());
+    public KakaoUserResponseDTO authenticate(String kakaoAccessToken) {
+		var kakaoUserInfo = kakaoInfoClient.getUserInfo("Bearer " + kakaoAccessToken);
 
 		return KakaoUserResponseDTO.builder()
 			.id(kakaoUserInfo.id())

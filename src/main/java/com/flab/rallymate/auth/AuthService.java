@@ -21,8 +21,8 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
 
-    public LoginResponseDTO kakaoLogin(String authCode) {
-        var kakaoResponse = kakaoAuthService.authenticate(authCode);
+    public LoginResponseDTO kakaoLogin(String kakaoAccessToken) {
+        var kakaoResponse = kakaoAuthService.authenticate(kakaoAccessToken);
 
         if (kakaoResponse == null) {
             throw new BaseException(ErrorCode.FAILED_KAKAO_AUTH);
