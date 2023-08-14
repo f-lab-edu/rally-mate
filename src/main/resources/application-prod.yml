@@ -3,6 +3,11 @@ spring:
     activate:
       on-profile: prod
 
+  redis:
+    token:
+      host: ENC(biX6zwVc0YCYKImhZRvCs3VSjlBMxpkQIFA7MydMEJU0cmkHbcBISWIAT7YwqBwW)
+      port: 6379
+
 oauth2:
   client:
     kakao:
