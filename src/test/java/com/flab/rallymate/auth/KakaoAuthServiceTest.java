@@ -34,22 +34,16 @@ class KakaoAuthServiceTest {
 	@Test
 	void authenticate_카카오인증_성공_시에_올바른_인증정보를_반환한다() {
 
-		String authCode = "sampleAuthCode";
-		String kakaoTokenQueryParam = KakaoTokenRequestDTO.createKakaoTokenRequestDTO(kakaoOAuthProperties, authCode).toString();
-		var kakaoTokenResponseDTO = KakaoTokenResponseDTO.builder()
-			.accessToken("kakaoSampleAccessToken")
-			.refreshToken("kakaoSampleRefreshToken")
-			.build();
+		String kakaoAccessToken = "sampleKakaoAccessToken";
 		var kakaoUserResponseDTO = KakaoUserResponseDTO.builder()
 			.id("sampleKakaoId")
 			.properties(Properties.builder().nickname("sampleNickname").build())
 			.kakaoAccount(KakaoAccount.builder().email("sample@sample.com").build())
 			.build();
-		when(kakaoAuthClient.requestToken(kakaoTokenQueryParam)).thenReturn(kakaoTokenResponseDTO);
-		when(kakaoInfoClient.getUserInfo("Bearer " + kakaoTokenResponseDTO.accessToken())).thenReturn(kakaoUserResponseDTO);
+		when(kakaoInfoClient.getUserInfo("Bearer " + kakaoAccessToken)).thenReturn(kakaoUserResponseDTO);
 
 
-		var result = sut.authenticate(authCode);
+		var result = sut.authenticate(kakaoAccessToken);
 
 
 		assertEquals("sampleKakaoId", result.id());
