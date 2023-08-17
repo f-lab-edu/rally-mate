@@ -1,7 +1,8 @@
 package com.flab.rallymate.auth.jwt;
 
-import com.flab.rallymate.auth.model.CustomUserDetails;
-import com.flab.rallymate.domain.member.constant.UserRole;
+import com.flab.rallymate.auth.domain.model.CustomUserDetails;
+import com.flab.rallymate.auth.jwt.repository.RefreshTokenRedisRepository;
+import com.flab.rallymate.member.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.UnsupportedJwtException;

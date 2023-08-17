@@ -1,5 +1,6 @@
 package com.flab.rallymate.error;
 
+import com.flab.rallymate.global.BaseHttpResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

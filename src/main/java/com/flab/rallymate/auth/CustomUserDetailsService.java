@@ -9,10 +9,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
-import com.flab.rallymate.auth.model.CustomUserDetails;
-import com.flab.rallymate.domain.member.constant.MemberStatus;
-import com.flab.rallymate.domain.member.domain.MemberEntity;
-import com.flab.rallymate.domain.member.domain.MemberRepository;
+import com.flab.rallymate.auth.domain.model.CustomUserDetails;
+import com.flab.rallymate.member.enums.MemberStatus;
+import com.flab.rallymate.member.domain.MemberEntity;
+import com.flab.rallymate.member.repository.MemberRepository;
 import com.flab.rallymate.error.BaseException;
 
 import lombok.RequiredArgsConstructor;
@@ -29,6 +29,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 		MemberEntity member = memberRepository.findMemberByEmailAndMemberStatus(email, MemberStatus.ACTIVATE)
 			.orElseThrow(() -> new BaseException(NOT_FOUND_MEMBER));
-		return new CustomUserDetails(member.getEmail(), member.getPassword(), List.of(member.getUserRole().getValue()));
+		return new CustomUserDetails(member.getEmail(), member.getPassword(), List.of(member.getUserRole().name()));
 	}
 }
