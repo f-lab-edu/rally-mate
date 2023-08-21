@@ -1,7 +1,7 @@
 package com.flab.rallymate.rallyschedule.controller;
 
 import com.flab.rallymate.rallyschedule.RallyScheduleService;
-import com.flab.rallymate.rallyschedule.domain.RallyScheduleRequestDTO;
+import com.flab.rallymate.rallyschedule.domain.dto.RallyScheduleRequestDTO;
 import com.flab.rallymate.global.BaseHttpResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;

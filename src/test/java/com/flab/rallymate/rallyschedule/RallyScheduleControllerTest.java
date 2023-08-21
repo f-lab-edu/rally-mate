@@ -3,7 +3,7 @@ package com.flab.rallymate.rallyschedule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.flab.rallymate.rallyschedule.controller.RallyScheduleController;
-import com.flab.rallymate.rallyschedule.domain.RallyScheduleRequestDTO;
+import com.flab.rallymate.rallyschedule.domain.dto.RallyScheduleRequestDTO;
 import com.flab.rallymate.error.BaseExceptionHandler;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;

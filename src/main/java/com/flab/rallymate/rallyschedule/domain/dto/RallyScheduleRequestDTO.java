@@ -1,7 +1,8 @@
-package com.flab.rallymate.rallyschedule.domain;
+package com.flab.rallymate.rallyschedule.domain.dto;
 
 import com.flab.rallymate.member.domain.MemberEntity;
 import com.flab.rallymate.rallyplace.domain.RallyPlaceEntity;
+import com.flab.rallymate.rallyschedule.domain.RallyScheduleEntity;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -32,7 +33,7 @@ public record RallyScheduleRequestDTO(
                 .playTime(playTime())
                 .startTime(startTime())
                 .member(member)
-                .playground(rallyPlace)
+                .rallyPlace(rallyPlace)
                 .build();
     }
 }
