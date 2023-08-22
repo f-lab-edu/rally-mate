@@ -14,5 +14,5 @@ public interface RallyScheduleRepository extends JpaRepository<RallyScheduleEnti
                                                     , JpaSpecificationExecutor<RallyScheduleEntity> {
 
     @Query("select rs from RallyScheduleEntity rs join fetch rs.member m join fetch rs.rallyPlace rp")
-    List<RallyScheduleEntity> findAllFetchJoin(Specification<RallyScheduleSearchDTO> spec);
+    List<RallyScheduleEntity> findAllFetchJoin(Specification<RallyScheduleEntity> spec);
 }
