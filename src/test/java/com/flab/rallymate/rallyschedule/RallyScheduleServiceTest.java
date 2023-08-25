@@ -143,7 +143,7 @@ class RallyScheduleServiceTest {
                 )
                 .build();
         var rallyScheduleEntities = List.of(rallySchedule1, rallySchedule2);
-        when(rallyScheduleRepository.findAll()).thenReturn(rallyScheduleEntities);
+        when(rallyScheduleRepository.findAllBy(RallyScheduleSearchDTO.builder().build())).thenReturn(rallyScheduleEntities);
 
 
         var rallyScheduleResponseDTOS = sut.getRallySchedules(RallyScheduleSearchDTO.builder().build());

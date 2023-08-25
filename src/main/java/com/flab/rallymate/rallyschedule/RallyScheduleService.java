@@ -46,8 +46,7 @@ public class RallyScheduleService {
 	@Transactional(readOnly = true)
 	public List<RallyScheduleResponseDTO> getRallySchedules(RallyScheduleSearchDTO searchDTO) {
 
-		return Optional.of(rallyScheduleRepository.findAll(getRallyScheduleSearchPredicate(searchDTO)))
-			.orElseGet(Collections::emptyList)
+		return rallyScheduleRepository.findAllBy(searchDTO)
 			.stream()
 			.map(RallyScheduleResponseDTO::toRallyScheduleResponseDTO)
 			.collect(Collectors.toList());
