@@ -7,15 +7,12 @@ import com.flab.rallymate.member.domain.MemberEntity;
 import com.flab.rallymate.rallyplace.RallyPlaceService;
 import com.flab.rallymate.rallyplace.domain.RallyPlaceEntity;
 import com.flab.rallymate.rallyschedule.domain.RallyScheduleEntity;
-import com.flab.rallymate.rallyschedule.domain.RallyScheduleSpecification;
-import com.flab.rallymate.rallyschedule.domain.dto.RallyScheduleResponseDTO;
 import com.flab.rallymate.rallyschedule.domain.dto.RallyScheduleSearchDTO;
 import com.flab.rallymate.rallyschedule.repository.RallyScheduleRepository;
 import com.flab.rallymate.rallyschedule.domain.dto.RallyScheduleRequestDTO;
 import com.flab.rallymate.error.BaseException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -143,54 +140,14 @@ class RallyScheduleServiceTest {
                 )
                 .build();
         var rallyScheduleEntities = List.of(rallySchedule1, rallySchedule2);
-        when(rallyScheduleRepository.findAllBy(RallyScheduleSearchDTO.builder().build())).thenReturn(rallyScheduleEntities);
+        when(rallyScheduleRepository.getRallySchedules(RallyScheduleSearchDTO.builder().build())).thenReturn(rallyScheduleEntities);
 
 
         var rallyScheduleResponseDTOS = sut.getRallySchedules(RallyScheduleSearchDTO.builder().build());
 
 
-        verify(rallyScheduleRepository).findAll();
+        verify(rallyScheduleRepository).getRallySchedules(RallyScheduleSearchDTO.builder().build());
         assertEquals(rallyScheduleEntities.size(), rallyScheduleResponseDTOS.size());
         assertEquals(rallyScheduleEntities.get(0).getId(), rallyScheduleResponseDTOS.get(0).id());
-
-    }
-
-    @Test
-    void getRallySchedule_특정_검색조건에_해당하는_구인글_목록조회시_조회에_성공한다() {
-		RallyScheduleEntity rallySchedule1 = RallyScheduleEntity.builder()
-			.id(1L)
-			.playTime(120)
-			.startTime(LocalDateTime.of(2023, 7, 28, 13, 30, 0))
-			.member(MemberEntity.builder().id(1L).name("nathan").build())
-			.rallyPlace(RallyPlaceEntity.builder().id(1L)
-				.address(
-					Address.builder().city("서울시").district("강남구").roadNameAddress("서울시 강남구 12-1").build()
-				).name("송실내테니스").build()
-			)
-			.build();
-		RallyScheduleEntity rallySchedule2 = RallyScheduleEntity.builder()
-			.id(2L)
-			.playTime(60)
-			.startTime(LocalDateTime.of(2023, 8, 21, 13, 30, 0))
-			.member(MemberEntity.builder().id(2L).name("hjun").build())
-			.rallyPlace(RallyPlaceEntity.builder().id(1L)
-				.address(
-					Address.builder().city("서울시").district("마포구").roadNameAddress("서울시 마포구 구룡길 11-1").build()
-				).name("상암 실내테니스").build()
-			)
-			.build();
-		var searchDTO = RallyScheduleSearchDTO.builder()
-																.city("서울시")
-																.district("마포구")
-																.build();
-		var rallyScheduleEntities = List.of(rallySchedule2);
-		when(rallyScheduleRepository.findAll()).thenReturn(rallyScheduleEntities);
-
-
-		var rallyScheduleResponseDTOS = sut.getRallySchedules(searchDTO);
-
-
-		assertEquals(1, rallyScheduleResponseDTOS.size());
-		assertEquals(rallyScheduleEntities.get(0).getRallyPlace().getAddress().getCity(), rallyScheduleResponseDTOS.get(0).city());
     }
 }

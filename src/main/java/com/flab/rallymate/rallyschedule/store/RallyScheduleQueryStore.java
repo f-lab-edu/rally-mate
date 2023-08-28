@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface RallyScheduleQueryStore {
 
-    List<RallyScheduleEntity> findAllBy(RallyScheduleSearchDTO searchDTO);
+    List<RallyScheduleEntity> getRallySchedules(RallyScheduleSearchDTO searchDTO);
 }

@@ -4,7 +4,6 @@ import com.flab.rallymate.rallyschedule.domain.RallyScheduleEntity;
 import com.flab.rallymate.rallyschedule.domain.dto.RallyScheduleSearchDTO;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -18,10 +17,10 @@ import static com.flab.rallymate.rallyschedule.domain.QRallyScheduleEntity.rally
 @RequiredArgsConstructor
 public class RallyScheduleQueryStoreImpl implements RallyScheduleQueryStore {
 
-    private JPAQueryFactory queryFactory;
+    private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<RallyScheduleEntity> findAllBy(RallyScheduleSearchDTO searchDTO) {
+    public List<RallyScheduleEntity> getRallySchedules(RallyScheduleSearchDTO searchDTO) {
         return queryFactory
                 .selectFrom(rallyScheduleEntity)
                 .join(rallyScheduleEntity.rallyPlace, rallyPlaceEntity)
