@@ -2,7 +2,7 @@ package com.flab.rallymate.rallyschedule.domain.dto;
 
 import com.flab.rallymate.member.domain.MemberEntity;
 import com.flab.rallymate.rallyplace.domain.RallyPlaceEntity;
-import com.flab.rallymate.rallyschedule.domain.RallyScheduleEntity;
+import com.flab.rallymate.rallyschedule.domain.entity.RallyScheduleEntity;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

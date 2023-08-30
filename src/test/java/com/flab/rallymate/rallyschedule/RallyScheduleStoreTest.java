@@ -6,7 +6,7 @@ import com.flab.rallymate.global.Address;
 import com.flab.rallymate.member.domain.MemberEntity;
 import com.flab.rallymate.member.enums.UserRole;
 import com.flab.rallymate.rallyplace.domain.RallyPlaceEntity;
-import com.flab.rallymate.rallyschedule.domain.RallyScheduleEntity;
+import com.flab.rallymate.rallyschedule.domain.entity.RallyScheduleEntity;
 import com.flab.rallymate.rallyschedule.domain.dto.RallyScheduleSearchDTO;
 import com.flab.rallymate.rallyschedule.store.RallyScheduleQueryStore;
 import com.flab.rallymate.rallyschedule.store.RallyScheduleQueryStoreImpl;

@@ -6,7 +6,7 @@ import com.flab.rallymate.member.MemberService;
 import com.flab.rallymate.member.domain.MemberEntity;
 import com.flab.rallymate.rallyplace.RallyPlaceService;
 import com.flab.rallymate.rallyplace.domain.RallyPlaceEntity;
-import com.flab.rallymate.rallyschedule.domain.RallyScheduleEntity;
+import com.flab.rallymate.rallyschedule.domain.entity.RallyScheduleEntity;
 import com.flab.rallymate.rallyschedule.domain.dto.RallyScheduleSearchDTO;
 import com.flab.rallymate.rallyschedule.repository.RallyScheduleRepository;
 import com.flab.rallymate.rallyschedule.domain.dto.RallyScheduleRequestDTO;
@@ -150,4 +150,8 @@ class RallyScheduleServiceTest {
         assertEquals(rallyScheduleEntities.size(), rallyScheduleResponseDTOS.size());
         assertEquals(rallyScheduleEntities.get(0).getId(), rallyScheduleResponseDTOS.get(0).id());
     }
+
+
+
+
 }

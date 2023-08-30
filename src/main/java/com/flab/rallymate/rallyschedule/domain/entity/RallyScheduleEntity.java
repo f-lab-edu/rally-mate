@@ -1,4 +1,4 @@
-package com.flab.rallymate.rallyschedule.domain;
+package com.flab.rallymate.rallyschedule.domain.entity;
 
 import java.time.LocalDateTime;
 

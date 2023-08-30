@@ -1,6 +1,6 @@
 package com.flab.rallymate.rallyschedule.domain.dto;
 
-import com.flab.rallymate.rallyschedule.domain.RallyScheduleEntity;
+import com.flab.rallymate.rallyschedule.domain.entity.RallyScheduleEntity;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
