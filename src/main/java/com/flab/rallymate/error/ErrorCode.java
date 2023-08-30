@@ -14,7 +14,8 @@ public enum ErrorCode {
 	DUPLICATE_EMAIL(HttpStatus.CONFLICT, "이미 존재하는 이메일입니다"),
 	ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근 권한이 없습니다"),
 
-	NOT_FOUND_PLAYGROUND(HttpStatus.NOT_FOUND, "요청하신 플레이그라운드 정보를 찾을 수 없습니다");
+	NOT_FOUND_RALLY_PLACE(HttpStatus.NOT_FOUND, "요청하신 랠리 장소 정보를 찾을 수 없습니다"),
+	NOT_FOUND_RALLY_SCHEDULE(HttpStatus.NOT_FOUND, "요청하신 랠리 스케쥴 정보를 찾을 수 없습니다");
 
 	private final HttpStatus httpStatus;
 	private final String message;

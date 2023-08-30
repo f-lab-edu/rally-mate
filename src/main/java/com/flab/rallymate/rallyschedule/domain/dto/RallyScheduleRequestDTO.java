@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 
 public record RallyScheduleRequestDTO(
         @NotNull(message = "플레이 공간을 선택해 주세요.")
-        Long playgroundId,
+        Long rallyPlaceId,
 
         @Positive(message = "플레이 시간은 0보다 큽니다.")
         @NotNull(message = "플레이 시간을 입력해 주세요.")

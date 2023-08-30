@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.flab.rallymate.error.ErrorCode.NOT_FOUND_MEMBER;
-import static com.flab.rallymate.error.ErrorCode.NOT_FOUND_PLAYGROUND;
+import static com.flab.rallymate.error.ErrorCode.NOT_FOUND_RALLY_PLACE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -44,19 +44,19 @@ class RallyScheduleServiceTest {
     void addRallySchedule_메이트_구인글_등록요청시_등록에_성공한다() throws Exception {
 
         var rallyScheduleRequestDTO = RallyScheduleRequestDTO.builder()
-                .playgroundId(1L)
+                .rallyPlaceId(1L)
                 .playTime(120)
                 .startTime(LocalDateTime.of(2023, 7, 28, 13, 30))
                 .build();
 
         String email = "sample@sample.com";
         var findMember = MemberEntity.builder().id(2L).name("nathan").build();
-        var findPlayground = RallyPlaceEntity.builder().id(rallyScheduleRequestDTO.playgroundId()).name("송실내테니스").build();
+        var findPlayground = RallyPlaceEntity.builder().id(rallyScheduleRequestDTO.rallyPlaceId()).name("송실내테니스").build();
         var rallySchedule = rallyScheduleRequestDTO.toRallyScheduleEntity(findMember, findPlayground);
 
         when(memberService.getCurrentMemberEmail()).thenReturn(email);
         when(memberService.findMemberBy(email)).thenReturn(Optional.ofNullable(findMember));
-        when(rallyPlaceService.findRallyPlaceBy(rallyScheduleRequestDTO.playgroundId())).thenReturn(Optional.ofNullable(findPlayground));
+        when(rallyPlaceService.findRallyPlaceBy(rallyScheduleRequestDTO.rallyPlaceId())).thenReturn(Optional.ofNullable(findPlayground));
 
 
         sut.addRallySchedule(rallyScheduleRequestDTO);
@@ -74,16 +74,16 @@ class RallyScheduleServiceTest {
     void addRallySchedule_구인_글_작성_요청시_조회된_회원정보가_없다면_NOT_FOUND_MEMBER_예외가_발생한다() throws Exception {
 
         var rallyScheduleRequestDTO = RallyScheduleRequestDTO.builder()
-                .playgroundId(1L)
+                .rallyPlaceId(1L)
                 .playTime(120)
                 .startTime(LocalDateTime.of(2023, 7, 28, 13, 30, 0))
                 .build();
         String email = "sample@sample.com";
-        var findPlayground = RallyPlaceEntity.builder().id(rallyScheduleRequestDTO.playgroundId()).name("송실내테니스").build();
+        var findPlayground = RallyPlaceEntity.builder().id(rallyScheduleRequestDTO.rallyPlaceId()).name("송실내테니스").build();
 
         when(memberService.getCurrentMemberEmail()).thenReturn(email);
         when(memberService.findMemberBy(email)).thenReturn(Optional.empty());
-        when(rallyPlaceService.findRallyPlaceBy(rallyScheduleRequestDTO.playgroundId())).thenReturn(Optional.ofNullable(findPlayground));
+        when(rallyPlaceService.findRallyPlaceBy(rallyScheduleRequestDTO.rallyPlaceId())).thenReturn(Optional.ofNullable(findPlayground));
 
 
         var baseException = assertThrows(BaseException.class, () -> sut.addRallySchedule(rallyScheduleRequestDTO));
@@ -96,7 +96,7 @@ class RallyScheduleServiceTest {
     void addRallySchedule_구인_글_작성_요청시_조회된_플레이장소가_없다면_NOT_FOUND_PLAYGROUND_예외가_발생한다() {
 
         var rallyScheduleRequestDTO = RallyScheduleRequestDTO.builder()
-                .playgroundId(1L)
+                .rallyPlaceId(1L)
                 .playTime(120)
                 .startTime(LocalDateTime.of(2023, 7, 28, 13, 30, 0))
                 .build();
@@ -105,13 +105,13 @@ class RallyScheduleServiceTest {
 
         when(memberService.getCurrentMemberEmail()).thenReturn(email);
         when(memberService.findMemberBy(email)).thenReturn(Optional.ofNullable(findMember));
-        when(rallyPlaceService.findRallyPlaceBy(rallyScheduleRequestDTO.playgroundId())).thenReturn(Optional.empty());
+        when(rallyPlaceService.findRallyPlaceBy(rallyScheduleRequestDTO.rallyPlaceId())).thenReturn(Optional.empty());
 
 
         var baseException = assertThrows(BaseException.class, () -> sut.addRallySchedule(rallyScheduleRequestDTO));
 
 
-        assertEquals(baseException.getMessage(), NOT_FOUND_PLAYGROUND.getMessage());
+        assertEquals(baseException.getMessage(), NOT_FOUND_RALLY_PLACE.getMessage());
     }
 
     @Test
