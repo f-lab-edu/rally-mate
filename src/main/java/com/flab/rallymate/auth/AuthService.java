@@ -1,12 +1,13 @@
 package com.flab.rallymate.auth;
 
-import com.flab.rallymate.auth.dto.LoginResponseDTO;
+import com.flab.rallymate.auth.domain.dto.LoginResponseDTO;
 import com.flab.rallymate.auth.jwt.JwtTokenProvider;
 import com.flab.rallymate.auth.jwt.dto.JwtTokenDTO;
-import com.flab.rallymate.domain.member.constant.MemberStatus;
-import com.flab.rallymate.domain.member.constant.UserRole;
-import com.flab.rallymate.domain.member.domain.MemberEntity;
-import com.flab.rallymate.domain.member.domain.MemberRepository;
+import com.flab.rallymate.auth.kakao.KakaoAuthService;
+import com.flab.rallymate.member.enums.MemberStatus;
+import com.flab.rallymate.member.enums.UserRole;
+import com.flab.rallymate.member.domain.MemberEntity;
+import com.flab.rallymate.member.repository.MemberRepository;
 import com.flab.rallymate.error.BaseException;
 import com.flab.rallymate.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -28,16 +29,18 @@ public class AuthService {
             throw new BaseException(ErrorCode.FAILED_KAKAO_AUTH);
         }
 
-        var email = kakaoResponse.kakaoAccount().email();
+        var email = kakaoResponse.kakaoAccountDTO().email();
         var findMember = memberRepository.findMemberByEmailAndMemberStatus(email, MemberStatus.ACTIVATE);
 
         if (findMember.isEmpty()) {
-            var createMember = MemberEntity.createMember(
-                                            kakaoResponse.properties().nickname(),
-                                            kakaoResponse.kakaoAccount().email(),
-											kakaoAuthService.getEncryptedPassword(kakaoResponse.id()),
-                                            UserRole.ROLE_USER
-            );
+            var createMember = MemberEntity.builder()
+                    .name(kakaoResponse.kakaoUserPropertiesDTO().nickname())
+                    .email(kakaoResponse.kakaoAccountDTO().email())
+                    .password(kakaoAuthService.getEncryptedPassword(kakaoResponse.id()))
+                    .career(0)
+                    .userRole(UserRole.ROLE_USER)
+                    .build();
+
             var savedMember = memberRepository.save(createMember);
 
 			return createLoginResponse(savedMember, UserRole.ROLE_USER);

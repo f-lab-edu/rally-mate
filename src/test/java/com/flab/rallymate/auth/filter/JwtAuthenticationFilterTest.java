@@ -19,9 +19,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.flab.rallymate.auth.CustomUserDetailsService;
 import com.flab.rallymate.auth.jwt.JwtAuthenticationFilter;
 import com.flab.rallymate.auth.jwt.JwtTokenProvider;
-import com.flab.rallymate.auth.jwt.RefreshTokenRedisRepository;
-import com.flab.rallymate.auth.model.CustomUserDetails;
-import com.flab.rallymate.domain.member.constant.UserRole;
+import com.flab.rallymate.auth.jwt.repository.RefreshTokenRedisRepository;
+import com.flab.rallymate.auth.domain.model.CustomUserDetails;
+import com.flab.rallymate.member.enums.UserRole;
 
 import jakarta.servlet.ServletException;
 

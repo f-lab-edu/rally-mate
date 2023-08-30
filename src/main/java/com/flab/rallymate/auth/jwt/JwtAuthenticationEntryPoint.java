@@ -16,9 +16,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * 인증되지 않는 유저가 요청 보냈을 시 동작
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor

@@ -3,16 +3,19 @@ package com.flab.rallymate.auth;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import com.flab.rallymate.auth.kakao.KakaoAuthClient;
+import com.flab.rallymate.auth.kakao.KakaoAuthService;
+import com.flab.rallymate.auth.kakao.KakaoInfoClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.flab.rallymate.auth.dto.KakaoAccount;
-import com.flab.rallymate.auth.dto.KakaoTokenRequestDTO;
-import com.flab.rallymate.auth.dto.KakaoTokenResponseDTO;
-import com.flab.rallymate.auth.dto.KakaoUserResponseDTO;
-import com.flab.rallymate.auth.dto.Properties;
-import com.flab.rallymate.config.oauth.KakaoOAuthProperties;
+import com.flab.rallymate.auth.domain.dto.KakaoAccountDTO;
+import com.flab.rallymate.auth.domain.dto.KakaoTokenRequestDTO;
+import com.flab.rallymate.auth.domain.dto.KakaoTokenResponseDTO;
+import com.flab.rallymate.auth.domain.dto.KakaoUserResponseDTO;
+import com.flab.rallymate.auth.domain.dto.KakaoUserPropertiesDTO;
+import com.flab.rallymate.config.KakaoOAuthProperties;
 
 class KakaoAuthServiceTest {
 
@@ -37,8 +40,8 @@ class KakaoAuthServiceTest {
 		String kakaoAccessToken = "sampleKakaoAccessToken";
 		var kakaoUserResponseDTO = KakaoUserResponseDTO.builder()
 			.id("sampleKakaoId")
-			.properties(Properties.builder().nickname("sampleNickname").build())
-			.kakaoAccount(KakaoAccount.builder().email("sample@sample.com").build())
+			.kakaoUserPropertiesDTO(KakaoUserPropertiesDTO.builder().nickname("sampleNickname").build())
+			.kakaoAccountDTO(KakaoAccountDTO.builder().email("sample@sample.com").build())
 			.build();
 		when(kakaoInfoClient.getUserInfo("Bearer " + kakaoAccessToken)).thenReturn(kakaoUserResponseDTO);
 
@@ -47,7 +50,7 @@ class KakaoAuthServiceTest {
 
 
 		assertEquals("sampleKakaoId", result.id());
-		assertEquals("sampleNickname", result.properties().nickname());
-		assertEquals("sample@sample.com", result.kakaoAccount().email());
+		assertEquals("sampleNickname", result.kakaoUserPropertiesDTO().nickname());
+		assertEquals("sample@sample.com", result.kakaoAccountDTO().email());
 	}
 }

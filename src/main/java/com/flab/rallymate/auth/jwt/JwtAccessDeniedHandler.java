@@ -10,9 +10,6 @@ import com.flab.rallymate.error.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-/**
- * 권한 불충분한 유저 요청 시 동작
- */
 @Component
 public class JwtAccessDeniedHandler implements AccessDeniedHandler {
 

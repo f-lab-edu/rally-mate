@@ -6,12 +6,13 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.function.Function;
 
+import com.flab.rallymate.auth.jwt.repository.RefreshTokenRedisRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.flab.rallymate.auth.jwt.dto.JwtTokenDTO;
-import com.flab.rallymate.auth.jwt.dto.RefreshTokenEntity;
-import com.flab.rallymate.domain.member.constant.UserRole;
+import com.flab.rallymate.auth.jwt.dto.RefreshToken;
+import com.flab.rallymate.member.enums.UserRole;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -59,7 +60,7 @@ public class JwtTokenProvider {
 		return extractExpiration(token).before(new Date());
 	}
 
-	public Optional<RefreshTokenEntity> findRefreshTokenBy(String email) {
+	public Optional<RefreshToken> findRefreshTokenBy(String email) {
 		return refreshTokenRedisRepository.findById(email);
 	}
 
@@ -74,7 +75,7 @@ public class JwtTokenProvider {
 	private String createRefreshToken(String email, UserRole role) {
 		String refreshToken = generateToken(email, role, REFRESH_TOKEN_TIMEOUT);
 
-		var refreshTokenEntity = RefreshTokenEntity.builder()
+		var refreshTokenEntity = RefreshToken.builder()
 			.email(email)
 			.expiration(REFRESH_TOKEN_TIMEOUT)
 			.build();

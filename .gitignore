@@ -143,5 +143,5 @@ gradle-app.setting
 *.hprof
 
 application-secret.yml
-
+src/main/generated/**
 # End of https://www.toptal.com/developers/gitignore/api/gradle,java,intellij+all
