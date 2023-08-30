@@ -37,7 +37,7 @@ public class RallyScheduleControllerTest {
     @Test
     void addRallySchedule_유효한_구인정보로_구인글_등록요청_시_등록에_성공한다() throws Exception {
         var rallyScheduleRequestDTO = RallyScheduleRequestDTO.builder()
-                .playgroundId(1L)
+                .rallyPlaceId(1L)
                 .playTime(30)
                 .startTime(LocalDateTime.now().plusHours(1L))
                 .build();
@@ -58,7 +58,7 @@ public class RallyScheduleControllerTest {
     @Test
     void addRallySchedule_구인글의_시작시간이_현재보다_과거면_BAD_REQUEST를_리턴한다() throws Exception {
         var rallyScheduleRequestDTO = RallyScheduleRequestDTO.builder()
-                .playgroundId(1L)
+                .rallyPlaceId(1L)
                 .playTime(30)
                 .startTime(LocalDateTime.now().minusHours(1L))
                 .build();
@@ -93,7 +93,7 @@ public class RallyScheduleControllerTest {
     @Test
     void addRallySchedule_구인글_등록시_플레이타임이_누락되었다면_등록에_실패한다() throws Exception {
         var rallyScheduleRequestDTO = RallyScheduleRequestDTO.builder()
-                .playgroundId(1L)
+                .rallyPlaceId(1L)
                 .startTime(LocalDateTime.now().plusHours(1L))
                 .build();
         String content = objectMapper.writeValueAsString(rallyScheduleRequestDTO);
@@ -110,7 +110,7 @@ public class RallyScheduleControllerTest {
     @Test
     void addRallySchedule_구인글_등록시_플레이타임이_음수값이라면_등록에_실패한다() throws Exception {
         var rallyScheduleRequestDTO = RallyScheduleRequestDTO.builder()
-                .playgroundId(1L)
+                .rallyPlaceId(1L)
                 .startTime(LocalDateTime.now().plusHours(1L))
                 .playTime(-1)
                 .build();
@@ -128,7 +128,7 @@ public class RallyScheduleControllerTest {
     @Test
     void addRallySchedule_구인글_등록시_시작시간이_누락되었다면_등록에_실패한다() throws Exception {
         var rallyScheduleRequestDTO = RallyScheduleRequestDTO.builder()
-                .playgroundId(1L)
+                .rallyPlaceId(1L)
                 .playTime(10)
                 .build();
         String content = objectMapper.writeValueAsString(rallyScheduleRequestDTO);

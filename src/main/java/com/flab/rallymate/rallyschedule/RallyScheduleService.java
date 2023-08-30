@@ -32,7 +32,7 @@ public class RallyScheduleService {
 		String email = memberService.getCurrentMemberEmail();
 		var member = memberService.findMemberBy(email).orElseThrow(() -> new BaseException(NOT_FOUND_MEMBER));
 
-		var playground = rallyPlaceService.findRallyPlaceBy(rallyScheduleRequestDTO.scheduleId())
+		var playground = rallyPlaceService.findRallyPlaceBy(rallyScheduleRequestDTO.rallyPlaceId())
 			.orElseThrow(() -> new BaseException(NOT_FOUND_RALLY_PLACE));
 		var rallySchedule = rallyScheduleRequestDTO.toRallyScheduleEntity(member, playground);
 		rallyScheduleRepository.save(rallySchedule);

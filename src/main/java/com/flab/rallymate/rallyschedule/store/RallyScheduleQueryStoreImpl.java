@@ -1,7 +1,7 @@
 package com.flab.rallymate.rallyschedule.store;
 
-import com.flab.rallymate.rallyschedule.domain.entity.RallyScheduleEntity;
 import com.flab.rallymate.rallyschedule.domain.dto.RallyScheduleSearchDTO;
+import com.flab.rallymate.rallyschedule.domain.entity.RallyScheduleEntity;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.flab.rallymate.rallyplace.domain.QRallyPlaceEntity.rallyPlaceEntity;
-import static com.flab.rallymate.rallyschedule.domain.QRallyScheduleEntity.rallyScheduleEntity;
+import static com.flab.rallymate.rallyschedule.domain.entity.QRallyScheduleEntity.rallyScheduleEntity;
 
 @Repository
 @RequiredArgsConstructor

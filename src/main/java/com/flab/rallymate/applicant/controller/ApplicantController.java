@@ -1,5 +1,7 @@
 package com.flab.rallymate.applicant.controller;
 
+import com.flab.rallymate.applicant.domain.ApplicantRequestDTO;
+import com.flab.rallymate.applicant.service.RallyApplicationService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,16 +15,16 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/places")
+@RequestMapping("/api/applicant")
 @RequiredArgsConstructor
 public class ApplicantController {
 
-    private final RallyPlaceService rallyPlaceService;
+    private final RallyApplicationService rallyApplicationService;
 
     @PostMapping
-    @Operation(summary = "랠리 장소 등록 API")
-    public BaseHttpResponse<String> addRallyPlace(@RequestBody RallyPlaceRequestDTO rallyPlaceRequestDTO) {
-        rallyPlaceService.addRallyPlace(rallyPlaceRequestDTO);
-        return BaseHttpResponse.successWithNoContent("장소를 등록했어요!");
+    @Operation(summary = "랠리 스케쥴 참여 요청 API")
+    public BaseHttpResponse<String> applyRallySchedule(@RequestBody ApplicantRequestDTO applicantRequestDTO) {
+        rallyApplicationService.applyRallySchedule(applicantRequestDTO);
+        return BaseHttpResponse.successWithNoContent("참여 요청에 성공 했습니다.");
     }
 }

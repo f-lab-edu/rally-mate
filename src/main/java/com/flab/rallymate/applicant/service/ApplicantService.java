@@ -1,5 +1,6 @@
 package com.flab.rallymate.applicant.service;
 
+import com.flab.rallymate.applicant.domain.ApplicantEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +22,15 @@ public class ApplicantService {
 	private final ApplicantRepository applicantRepository;
 	private final MemberService memberService;
 
-	public void addApplicant(ApplicantRequestDTO applicantRequestDTO, RallyScheduleEntity rallySchedule) {
+	public void addApplicant(RallyScheduleEntity rallySchedule) {
 		String email = memberService.getCurrentMemberEmail();
 		MemberEntity member = memberService.findMemberBy(email)
 			.orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_MEMBER));
-		applicantRepository.save(applicantRequestDTO.toApplicantEntity(member, rallySchedule));
+
+		ApplicantEntity applicantEntity = ApplicantEntity.builder()
+			.member(member)
+			.rallySchedule(rallySchedule)
+			.build();
+		applicantRepository.save(applicantEntity);
 	}
 }
