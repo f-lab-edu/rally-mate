@@ -35,8 +35,6 @@ class RallyApplicationServiceTest {
 	@Test
 	void applyRallySchedule_랠리스케쥴_참여요청에_성공한다() {
 
-		String email = "test@test.com";
-		var member = MemberEntity.builder().build();
 		var applicantRequestDTO = ApplicantRequestDTO.builder().scheduleId(1L).build();
 		var rallySchedule = RallyScheduleEntity.builder().build();
 		when(rallyScheduleService.findRallyScheduleBy(applicantRequestDTO.scheduleId())).thenReturn(rallySchedule);
@@ -48,4 +46,33 @@ class RallyApplicationServiceTest {
 		 verify(rallyScheduleService, times(1)).findRallyScheduleBy(applicantRequestDTO.scheduleId());
 		 verify(applicantService, times(1)).addApplicant(rallySchedule);
 	}
+
+	@Test
+	void applyRallySchedule_이미_요청한_참여자가_참여_재요청시에_실패한다() {
+		// (1) 무엇을 테스트할 것인가 : 랠리 스케쥴 참여 요청
+	  // (2) 어떤 상황에서 ? : 특정 스케쥴에 참여 요청을 보낸 사용자가 재 참여 요청을 보내는 상황
+	  // (3) 기대하는 결과는? : "이미 참여 요청하였습니다" 메시지, 참여 요청 실패
+
+	}
+
+	@Test
+	void applyRallySchedule_존재하지_않는_랠리스케쥴에_참여요청시_실패한다() {
+
+	}
+
+	@Test
+	void applyRallySchedule_시작일이_이미_지난_랠리스케쥴에_참여요청시_실패한다() {
+
+	}
+
+	@Test
+	void applyRallySchedule_이미_종료된_랠리스케쥴에_참여요청시_실패한다() {
+
+	}
+
+	@Test
+	void applyRallySchedule_정원초과된_랠리스케쥴에_참여요청시_실패한다() {
+
+	}
+
 }
