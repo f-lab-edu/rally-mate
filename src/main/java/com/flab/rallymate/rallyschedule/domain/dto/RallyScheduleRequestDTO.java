@@ -22,7 +22,10 @@ public record RallyScheduleRequestDTO(
         @NotNull(message = "시작 시간을 입력해 주세요.")
         @Future(message = "현재 시간 이후로 입력해 주세요.")
         @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-        LocalDateTime startTime
+        LocalDateTime startTime,
+
+        @Positive(message = "최대 인원은 0보다 큽니다.")
+        int maxApplicant
 ) {
     @Builder
     public RallyScheduleRequestDTO {
@@ -32,6 +35,7 @@ public record RallyScheduleRequestDTO(
         return RallyScheduleEntity.builder()
                 .playTime(playTime())
                 .startTime(startTime())
+                .maxApplicant(maxApplicant())
                 .member(member)
                 .rallyPlace(rallyPlace)
                 .build();

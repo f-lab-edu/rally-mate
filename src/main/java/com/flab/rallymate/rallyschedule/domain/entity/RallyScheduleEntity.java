@@ -39,6 +39,9 @@ public class RallyScheduleEntity extends BaseEntity {
 	@Column(name = "start_time", nullable = false)
 	private LocalDateTime startTime;
 
+	@Column(name="max_applicant")
+	private int maxApplicant;
+
 	@JoinColumn(name = "member_id")
 	@ManyToOne(fetch = FetchType.LAZY)
 	private MemberEntity member;
@@ -47,11 +50,12 @@ public class RallyScheduleEntity extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	private RallyPlaceEntity rallyPlace;
 
-	private RallyScheduleEntity(Long id, int playTime, LocalDateTime startTime, MemberEntity member,
+	private RallyScheduleEntity(Long id, int playTime, LocalDateTime startTime, int maxApplicant, MemberEntity member,
 		RallyPlaceEntity rallyPlace) {
 		this.id = id;
 		this.playTime = playTime;
 		this.startTime = startTime;
+		this.maxApplicant = maxApplicant;
 		this.member = member;
 		this.rallyPlace = rallyPlace;
 	}

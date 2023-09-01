@@ -40,6 +40,7 @@ public class RallyScheduleControllerTest {
                 .rallyPlaceId(1L)
                 .playTime(30)
                 .startTime(LocalDateTime.now().plusHours(1L))
+                .maxApplicant(2)
                 .build();
         String content = objectMapper.writeValueAsString(rallyScheduleRequestDTO);
 
@@ -60,6 +61,7 @@ public class RallyScheduleControllerTest {
         var rallyScheduleRequestDTO = RallyScheduleRequestDTO.builder()
                 .rallyPlaceId(1L)
                 .playTime(30)
+                .maxApplicant(2)
                 .startTime(LocalDateTime.now().minusHours(1L))
                 .build();
         String content = objectMapper.writeValueAsString(rallyScheduleRequestDTO);
@@ -77,6 +79,7 @@ public class RallyScheduleControllerTest {
     void addRallySchedule_구인글_등록시_플레이공간이_누락되었다면_등록에_실패한다() throws Exception {
         var rallyScheduleRequestDTO = RallyScheduleRequestDTO.builder()
                 .playTime(30)
+                .maxApplicant(2)
                 .startTime(LocalDateTime.now().plusHours(1L))
                 .build();
         String content = objectMapper.writeValueAsString(rallyScheduleRequestDTO);
@@ -113,6 +116,7 @@ public class RallyScheduleControllerTest {
                 .rallyPlaceId(1L)
                 .startTime(LocalDateTime.now().plusHours(1L))
                 .playTime(-1)
+                .maxApplicant(2)
                 .build();
         String content = objectMapper.writeValueAsString(rallyScheduleRequestDTO);
 
