@@ -32,6 +32,7 @@ create table rally_schedule
     rally_place_id int unsigned null,
     play_time     smallint     not null,
     start_time    datetime     not null,
+    max_applicant   smallint unsigned not null,
     created_at   datetime                       not null default CURRENT_TIMESTAMP,
     updated_at    datetime                       null default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
     constraint fk_member_rally_schedule
