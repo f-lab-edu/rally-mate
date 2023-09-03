@@ -1,10 +1,9 @@
 package com.flab.rallymate.applicant.service;
 
-import com.flab.rallymate.applicant.domain.ApplicantEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.flab.rallymate.applicant.domain.ApplicantRequestDTO;
+import com.flab.rallymate.applicant.domain.ApplicantEntity;
 import com.flab.rallymate.applicant.repository.ApplicantRepository;
 import com.flab.rallymate.error.BaseException;
 import com.flab.rallymate.error.ErrorCode;
@@ -33,4 +32,18 @@ public class ApplicantService {
 			.build();
 		applicantRepository.save(applicantEntity);
 	}
+
+	public boolean isAlreadyApplied(RallyScheduleEntity rallySchedule) {
+		String email = memberService.getCurrentMemberEmail();
+		MemberEntity member = memberService.findMemberBy(email)
+			.orElseThrow(() -> new BaseException(ErrorCode.NOT_FOUND_MEMBER));
+
+		return applicantRepository.existsByMemberAndRallySchedule(member, rallySchedule);
+	}
+
+	public int getApplicantCount(RallyScheduleEntity rallySchedule) {
+		return applicantRepository.countByRallySchedule(rallySchedule);
+	}
+
+
 }

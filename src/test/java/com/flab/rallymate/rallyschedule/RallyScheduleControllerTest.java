@@ -98,6 +98,7 @@ public class RallyScheduleControllerTest {
         var rallyScheduleRequestDTO = RallyScheduleRequestDTO.builder()
                 .rallyPlaceId(1L)
                 .startTime(LocalDateTime.now().plusHours(1L))
+				.maxApplicant(2)
                 .build();
         String content = objectMapper.writeValueAsString(rallyScheduleRequestDTO);
 

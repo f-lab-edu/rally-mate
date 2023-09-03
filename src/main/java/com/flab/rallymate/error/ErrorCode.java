@@ -15,7 +15,12 @@ public enum ErrorCode {
 	ACCESS_DENIED(HttpStatus.FORBIDDEN, "접근 권한이 없습니다"),
 
 	NOT_FOUND_RALLY_PLACE(HttpStatus.NOT_FOUND, "요청하신 랠리 장소 정보를 찾을 수 없습니다"),
-	NOT_FOUND_RALLY_SCHEDULE(HttpStatus.NOT_FOUND, "요청하신 랠리 스케쥴 정보를 찾을 수 없습니다");
+	NOT_FOUND_RALLY_SCHEDULE(HttpStatus.NOT_FOUND, "요청하신 랠리 스케쥴 정보를 찾을 수 없습니다"),
+
+	ALREADY_APPLIED(HttpStatus.BAD_REQUEST, "이미 참여 요청한 랠리 스케쥴입니다"),
+	ALREADY_STARTED(HttpStatus.BAD_REQUEST, "이미 시작한 랠리 스케쥴입니다"),
+	EXCEED_MAX_APPLICANT(HttpStatus.BAD_REQUEST, "최대 참여 인원을 초과한 랠리 스케쥴입니다");
+
 
 	private final HttpStatus httpStatus;
 	private final String message;
